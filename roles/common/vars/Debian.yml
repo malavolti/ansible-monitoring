@@ -1,0 +1,9 @@
+---
+# Default Common Vars
+
+### NTP
+my_timezone: Europe/Rome
+
+ntp1: ntp1.inrim.it
+ntp2: ntp2.inrim.it
+ntp3: 0.it.pool.ntp.org

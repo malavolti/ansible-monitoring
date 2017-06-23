@@ -1,0 +1,44 @@
+---
+# Install Oracle JDK on Debian
+
+- name: "Install add-apt-repostory"
+  apt:
+   name: "software-properties-common"
+   state: latest
+   update_cache: yes
+
+- name: "Add Oracle Java Repository"
+  apt_repository:
+   repo: "ppa:webupd8team/java"
+   codename: "xenial"
+
+- name: "Accept Java License"
+  debconf:
+   name: "oracle-java{{ jdk_version }}-installer"
+   question: "shared/accepted-oracle-license-v1-1"
+   value: "true"
+   vtype: "select"
+
+- name: "Install Oracle Java"
+  apt:
+   name: "{{ item }}"
+   state: latest
+   update_cache: yes
+  with_items:
+    - "oracle-java{{ jdk_version }}-installer"
+    - "ca-certificates"
+    - "oracle-java{{ jdk_version }}-set-default"
+
+- name: "Be sure to set the default-java link"
+  file:
+   src: "/usr/lib/jvm/java-{{ jdk_version }}-oracle"
+   dest: "/usr/lib/jvm/default-java"
+   state: link
+
+- name: "Be sure to install Oracle Java Cryptography Extension (JCE)"
+  copy:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+  with_items:
+   - { src: "files/java{{ jdk_version }}/oraclejdk/local_policy.jar", dest: '/usr/lib/jvm/default-java/jre/lib/security/local_policy.jar' }
+   - { src: "files/java{{ jdk_version }}/oraclejdk/US_export_policy.jar", dest: '/usr/lib/jvm/default-java/jre/lib/security/US_export_policy.jar' }

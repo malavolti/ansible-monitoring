@@ -1,0 +1,12 @@
+# Put here those IdP that should be provided of an Identity Management System
+[Debian]
+idp-ldap.example.org
+
+# Put here those IdP that should NOT be provided of an Identity Management System
+# because an already existant LDAP/IDM will be provided by the requester organization 
+[Debian-no-LDAP]
+idp-no-ldap.example.org
+
+# Put here "localhost" because the OpenStack Client is installed here
+[openstack-client]
+localhost

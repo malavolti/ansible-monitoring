@@ -1,0 +1,13 @@
+---
+# defaults file for jdk
+# Available:
+#
+# OpenJDK: 
+#   jdk_type: "openjdk"
+#
+# Oracle JDK: 
+#   jdk_type: "oraclejdk"
+
+jdk_type: "openjdk"
+
+mirror: "https://mi.mirror.garr.it/mirrors/debian/"

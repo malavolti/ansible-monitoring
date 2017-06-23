@@ -1,0 +1,107 @@
+---
+# tasks file for common
+- name: "Include OS-specific variables if custom ones are not already defined by host_vars"
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: common
+
+- name: "Be sure to format correctly the volume, if exists"
+  filesystem:
+   fstype: "{{ item['volume_fs'] }}"
+   dev: "{{ item['volume_dev'] }}"
+  when:
+   - common is defined
+   - item['volume_dev'] is defined
+   - item['volume_dev'] != ""
+   - item['volume_fs'] is defined
+   - item['volume_fs'] != ""
+  with_items: "{{ common['volumes'] }}"
+  tags: common
+
+- name: "Be sure to mount the volume on its directory and with its FileSystem type"
+  mount:
+   state: "mounted"
+   src: "{{ item['volume_dev'] }}"
+   path: "{{ item['volume_path'] }}"
+   fstype: "{{ item['volume_fs'] }}"
+  when:
+   - common is defined
+   - item['volume_dev'] is defined
+   - item['volume_dev'] != ""
+   - item['volume_fs'] is defined
+   - item['volume_fs'] != ""
+   - item['volume_path'] is defined
+   - item['volume_path'] != ""
+  with_items: "{{ common['volumes'] }}"
+  tags: common
+
+- name: "Be sure that the FQDN is configured"
+  template:
+   src: hosts.j2
+   dest: /etc/hosts
+   owner: "root"
+   group: "root"
+   mode: "0644" 
+  tags: common
+
+- name: "Be sure to comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
+  lineinfile:
+   dest: /etc/cloud/cloud.cfg
+   regexp: "manage_etc_hosts"
+   line: "#manage_etc_hosts"
+   state: present
+  tags: common
+
+- name: "Be sure that needed packages are installed"
+  apt: 
+   name: "{{item}}"
+   update_cache: yes
+   state: latest
+  with_items:
+   - ntp
+   - ntpdate
+   - vim
+   - openssl
+   - aptitude
+   - apt-transport-https
+  tags: common
+
+- name: "Be sure to use the preferred mirror for packages"
+  replace:
+   dest: /etc/apt/sources.list
+   regexp: "http[:][/][/]http.debian.net[/]debian"
+   replace: "{{ mirror }}"
+  tags: common 
+
+- name: "Be sure ntp is configured"
+  template: 
+   src: ntp.conf.j2
+   dest: /etc/ntp.conf
+  notify:
+    - "Restart ntp"
+  tags: common
+
+- name: "Be sure ntpd is running and enabled"
+  service: 
+   name: ntp
+   state: started
+   enabled: yes
+  tags: common
+
+- name: "Set timezone variable"
+  template:
+   src: timezone.j2
+   dest: /etc/timezone
+   owner: "root"
+   group: "root"
+   mode: "0644"
+   backup: "yes"
+  notify:
+   - "Update Timezone"
+  tags: common
+
+- name: "Be sure to configure SSL if needed"
+  include: "configure_ssl.yml"
+  when: 
+   - ssl is defined
+   - ssl in ["True","true","Yes","yes"]
+  tags: common

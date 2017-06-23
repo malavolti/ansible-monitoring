@@ -1,0 +1,11 @@
+---
+# file: shib-idp-servers.yml
+- hosts: Debian-Elasticsearch
+  become: yes
+  become_method: sudo
+  remote_user: debian
+  roles:
+    - common
+    - jdk
+    - elasticsearch
+    - pkgs_upgrade

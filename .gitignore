@@ -1,0 +1,26 @@
+# ignore generated 'retry' files
+*.retry
+
+# ignore vault password file
+*.vault_pass.txt
+
+
+# ignore swp files
+*.swp
+
+# ignore emacs files
+*~
+
+# ignore .git_ignore files
+*.git_ignore
+
+
+# Ignore all files belonging the group_vars dir
+inventories/*/host_vars/*
+
+# Excluded templates files
+!host_vars/FQDN.yml-template
+
+
+# ignore Ansible inventories
+*.ini

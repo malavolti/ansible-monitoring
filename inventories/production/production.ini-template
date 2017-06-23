@@ -1,0 +1,4 @@
+# Put here IP or FQDN of your Elasticsearch Servers
+[Debian-Elasticsearch]
+elasticsearch1.example.org
+elasticsearch2.example.org

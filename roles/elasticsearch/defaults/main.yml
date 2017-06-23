@@ -1,0 +1,4 @@
+---
+# defaults file for elasticsearch
+
+elastic-gpg-key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
