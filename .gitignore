@@ -4,6 +4,14 @@
 # ignore vault password file
 *.vault_pass.txt
 
+# ignore crt and key files
+*.crt
+*.key
+*.pem
+*.jks
+*.kver
+*.p12
+*_pw.txt
 
 # ignore swp files
 *.swp
@@ -19,7 +27,7 @@
 inventories/*/host_vars/*
 
 # Excluded templates files
-!host_vars/FQDN.yml-template
+!host_vars/*-template
 
 
 # ignore Ansible inventories

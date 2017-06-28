@@ -18,45 +18,6 @@
    state: latest
    update_cache: yes
 
-- name: "Be sure to configure elasticsearch for systemd"
-  replace:
-   dest: "/usr/lib/systemd/system/elasticsearch.service"
-   regexp: "{{ item['regexp'] }}"
-   replace: "{{ item['replace'] }}"
-  with_items:
-   - { regexp: "#LimitMEMLOCK=infinity", replace: "LimitMEMLOCK=infinity" }
-
-- name: "Be sure to configure elasticsearch default"
-  replace:
-   dest: "/etc/default/elasticsearch"
-   regexp: "{{ item['regexp'] }}"
-   replace: "{{ item['replace'] }}"
-  with_items:
-   - { regexp: "#JAVA_HOME=", replace: "JAVA_HOME=/usr/lib/jvm/default-java/jre" }
-   - { regexp: "#ES_JAVA_OPTS=", replace: "ES_JAVA_OPTS=-Xms2g -Xmx2g" }
-   - { regexp: "#MAX_LOCKED_MEMORY=unlimited", replace: "MAX_LOCKED_MEMORY=unlimited" }
-
-- name: "Be sure to have created needed directory on the existent volume"
-  file:
-   path: "{{ item }}" 
-   state: directory
-   mode: 0755
-  with_items:
-   - "{{ common['volumes'][0]['volume_path'] }}/log"
-   - "{{ common['volumes'][0]['volume_path'] }}/log/elasticsearch"
-  when:
-   - common is defined
-   - common['volumes'][0]['volume_path'] is defined
-   - common['volumes'][0]['volume_path'] != ""
-
-- name: "Be sure to configure correctly elasticsearch"
-  template:
-   src: "conf/elasticsearch.yml.j2"
-   dest: "/etc/elasticsearch/elasticsearch.yml"
-   owner: "root"
-   group: "elasticsearch"
-   mode: "0660"
-
 - name: "Be sure to enable elasticsearch service and ensure it is not masked"
   systemd:
    name: "elasticsearch.service"

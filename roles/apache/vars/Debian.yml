@@ -1,0 +1,6 @@
+---
+# Debian Packages for Apache
+
+httpd_packages:
+  - apache2
+  - apache2-utils

@@ -1,0 +1,13 @@
+---
+# tasks file for apache
+- name: "Include OS-specific variables."
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags: httpd
+
+- name: "Install Apache"
+  include: httpd-install.yml
+  tags: httpd
+
+- name: "Configure Apache"
+  include: httpd-configure.yml
+  tags: httpd

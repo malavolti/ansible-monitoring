@@ -1,0 +1,12 @@
+---
+# tasks for configure.yml
+
+- name: "Be sure to configure correctly kibana"
+  template:
+   src: "conf/kibana.yml.j2"
+   dest: "/etc/kibana/kibana.yml"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  notify:
+   - "Restart Kibana"

@@ -1,0 +1,49 @@
+---
+# tasks file for kibana
+- name: "Be sure that kibana GPG Key is installed"
+  apt_key:
+    id: "D88E42B4"
+    url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+    state: present
+
+- name: "Be sure to add elastic repository"
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
+    state: present
+    filename: 'elastic-5.x'
+
+- name: "Be sure to install the kibana package"
+  apt:
+   name: "kibana"
+   state: latest
+   update_cache: yes
+
+- name: "Be sure to have created needed directory on the existent volume"
+  file:
+   path: "{{ item }}" 
+   state: directory
+   mode: 0755
+  with_items:
+   - "{{ common['volumes'][0]['volume_path'] }}/log"
+   - "{{ common['volumes'][0]['volume_path'] }}/log/kibana"
+  when:
+   - common is defined
+   - common['volumes'] is defined
+   - common['volumes'][0]['volume_path'] is defined
+   - common['volumes'][0]['volume_path'] != ""
+
+- name: "Be sure to configure correctly kibana"
+  template:
+   src: "conf/kibana.yml.j2"
+   dest: "/etc/kibana/kibana.yml"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+
+- name: "Be sure to enable kibana service and ensure it is not masked"
+  systemd:
+   name: "kibana.service"
+   daemon_reload: yes
+   enabled: yes
+   state: started
+   masked: no

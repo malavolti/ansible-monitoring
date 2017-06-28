@@ -1,0 +1,7 @@
+---
+# handlers file for kibana
+- name: "Restart Kibana"
+  systemd:
+   name: "kibana.service"
+   daemon_reload: yes
+   state: restarted

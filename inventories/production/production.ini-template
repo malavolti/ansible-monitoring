@@ -2,3 +2,7 @@
 [Debian-Elasticsearch]
 elasticsearch1.example.org
 elasticsearch2.example.org
+
+# Put here IP or FQDN of your Kibana Servers
+[Debian-Kibana]
+kibana.example.org

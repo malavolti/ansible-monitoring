@@ -1,5 +1,3 @@
 ---
 # defaults file for common
-ssl: "False"
-
 mirror: "https://mi.mirror.garr.it/mirrors/debian/"

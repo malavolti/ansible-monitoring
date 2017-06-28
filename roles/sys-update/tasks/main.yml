@@ -1,5 +1,5 @@
 ---
-# tasks file for pkgs_upgrade
+# tasks file for sys-update
 - name: "Be sure to upgrade all packages"
   apt:
    upgrade: dist

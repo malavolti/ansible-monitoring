@@ -35,7 +35,7 @@ node.name: {{ elasticsearch['config']['node_name'] }}
 # Path to log files:
 #
 {% if common['volumes'][0]['volume_path'] is defined  %}
-path.log: {{ common['volumes'][0]['volume_path'] }}/log/elasticsearch
+path.logs: {{ common['volumes'][0]['volume_path'] }}/log/elasticsearch
 {% else %}
 #path.logs: /path/to/logs
 {% endif %}

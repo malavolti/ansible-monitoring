@@ -10,6 +10,7 @@
    dev: "{{ item['volume_dev'] }}"
   when:
    - common is defined
+   - common['volumes'] is defined
    - item['volume_dev'] is defined
    - item['volume_dev'] != ""
    - item['volume_fs'] is defined
@@ -25,6 +26,7 @@
    fstype: "{{ item['volume_fs'] }}"
   when:
    - common is defined
+   - common['volumes'] is defined
    - item['volume_dev'] is defined
    - item['volume_dev'] != ""
    - item['volume_fs'] is defined
@@ -60,7 +62,9 @@
    - ntp
    - ntpdate
    - vim
+   - ca-certificates
    - openssl
+   - ssl-cert
    - aptitude
    - apt-transport-https
   tags: common
@@ -102,6 +106,6 @@
 - name: "Be sure to configure SSL if needed"
   include: "configure_ssl.yml"
   when: 
-   - ssl is defined
-   - ssl in ["True","true","Yes","yes"]
+   - common['ssl'] is defined
+   - common['ssl'] in ["True","true","Yes","yes"]
   tags: common

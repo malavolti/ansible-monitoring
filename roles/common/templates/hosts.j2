@@ -1,4 +1,3 @@
-{{ ansible_default_ipv4['address'] }} {{ fqdn }} {{ ansible_hostname }}
 127.0.0.1 localhost
 
 # The following lines are desirable for IPv6 capable hosts
@@ -8,3 +7,13 @@ ff00::0 ip6-mcastprefix
 ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
+# {{ ansible_managed }}
+127.0.0.1   localhost
+
+# Network nodes as generated through Ansible.
+{% for host in play_hosts %}
+{% set short_name = host.split('.') %}
+{% if 'ansible_eth0' in hostvars[host] %}
+{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }} {{ host }} {{ short_name[0] }}
+{% endif %}
+{% endfor %}

@@ -6,8 +6,10 @@ Ansible Playbook to manage some monitoring tools
 
 * [Ansible](https://www.ansible.com/) - Tested with Ansible v2.3.1.0
 
+## Howto Configure 
 
-## Simple flow to Configure Elasticsearch servers
+
+## Simple flow to Configure Kibana and Elasticsearch servers
 
 **NOTE**: In our production environment, we provide to the elasticsearch servers a persistent storage device to store all we need.
 
@@ -33,11 +35,13 @@ Ansible Playbook to manage some monitoring tools
    into proper ```/opt/ansible-monitoring/#_environment_#/host_vars/FQDN.yml``` file.
    This file will provide to Ansible all variables needed to instance elasticsearch servers.
 
-6. Encrypt the monitoring configuration files with Ansible Vault (Optional: this is needed ONLY when you need Ansible Vault):
+6. Insert the Kibana's SSL Certificate, the Kibana's SSL Certificate Key and the Certification Authority certificate in the ```/opt/ansible-monitoring/roles/common/files``` directory.
+
+7. Encrypt the monitoring configuration files with Ansible Vault (Optional: this is needed ONLY when you need Ansible Vault):
    * ```cd /opt/ansible-monitoring```
    * ```ansible-vault encrypt inventories/#_environment_#/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
-7. Execute this command to run Ansible on develoment inventory and to instance new virtual machine:
+8. Execute this command to run Ansible on develoment inventory and to instance new virtual machine:
    * ```ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt```
 
 
@@ -49,6 +53,9 @@ Ansible Playbook to manage some monitoring tools
 [Debian-Elasticsearch]
 elasticsearch1.example.org
 elasticsearch2.example.org
+# Put here IP or FQDN of your Kibana Servers
+[Debian-Kibana]
+kibana.example.org
 -----------------------
 ```
 

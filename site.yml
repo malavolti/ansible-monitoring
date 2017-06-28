@@ -1,3 +1,4 @@
 ---
 # file: site.yml
 - include: elasticsearch-servers.yml
+- include: kibana-servers.yml

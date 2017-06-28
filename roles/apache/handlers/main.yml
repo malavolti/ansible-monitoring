@@ -1,0 +1,9 @@
+---
+# handlers file for apache
+- name: "Restart Apache"
+  become: yes
+  become_method: sudo
+  service:
+   name: apache2
+   state: restarted
+  tags: httpd
