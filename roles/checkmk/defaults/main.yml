@@ -1,0 +1,4 @@
+---
+# defaults file for checkmk
+
+checkmk_site: "idpcloud"

@@ -1,0 +1,38 @@
+---
+# file: host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml
+
+# Machine Variables
+
+fqdn: "checkmk.example.org"
+
+common:
+   ssl: "True"
+   ca: "checkmk.example.org.crt"
+   ssl_cert: "checkmk.example.org.crt"
+   ssl_key: "checkmk.example.org.key"
+
+apache:
+   admin_email: "support@example.org"
+
+# checkmk Variables
+
+checkmk:
+ config:
+  site_name: "{{ checkmk_site }}"
+  cmkadmin_pw: "cmkadmin_user_password"
+  hostgroups:
+   - name: "irccs-example"
+     alias: "IRCCS-EXAMPLE"
+     regexp: "~.*.irccs.example.org"
+     comment: "IRCCS Idenity Providers"
+     descr: "IRCCS IdPs"
+   - name: "izs"
+     alias: "IZS"
+     regexp: "~.*.izs.example.org"
+     comment: "IZS Identity Providers"
+     descr: "IZS IdPs"
+  servicegroups:
+   - name: "idp-all-in-one-services"
+     alias: "IdP All in One services"
+   - name: "idp-only-services"
+     alias: "IdP Only services"

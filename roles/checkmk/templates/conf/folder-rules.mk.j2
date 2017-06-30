@@ -1,0 +1,25 @@
+# Created by ANSIBLE
+# encoding: utf-8
+
+active_checks.setdefault('http', [])
+
+{% if folder_name == "IdP-All-in-One" %}
+active_checks['http'] = [
+  ( (u'^Check IDM-TOOLS', {'expect_response': ['HTTP/1.1 401 Unauthorized'], 'ssl': 'auto', 'expect_string': 'the URL "/idm-tools"', 'uri': '/idm-tools'}), ['/' + FOLDER_PATH + '/+'], ALL_HOSTS, {'comment': u'Check the existance of /idm-tools page', 'description': u'Check IDM tools page'} ),
+  ( (u'^Check IDM page', {'expect_response': ['HTTP/1.1 401 Unauthorized'], 'ssl': 'auto', 'expect_string': 'the URL "/idm"', 'uri': '/idm'}), ['/' + FOLDER_PATH + '/+'], ALL_HOSTS, {'comment': u'Check the existance of /idm page', 'description': u'Check IDM page'} ),
+  ( (u'^Check LOCKUSER', {'expect_response': ['HTTP/1.1 401 Unauthorized'], 'ssl': 'auto', 'expect_string': 'the URL "/idm/lockuser.php".', 'uri': '/idm/lockuser.php'}), ['/' + FOLDER_PATH + '/+'], ALL_HOSTS, {'comment': u'Check the existance of /idm/lockuser.php page', 'description': u'Check Lockout User page'} ),
+  ( (u'^Check IDP MD', {'ssl': 'auto', 'uri': '/idp/shibboleth'}), ['/' + FOLDER_PATH + '/+'], ALL_HOSTS, {'comment': u"Check IdP Metadata reachability", 'description': u'Check IdP Metadata'} ),
+] + active_checks['http']
+
+service_groups = [
+  ( 'idp-all-in-one-services', ['/' + FOLDER_PATH + '/+'], ALL_HOSTS, [u'CPU load', u'CPU utilization', u'Check HTTPS', u'Check IDP MD', u'Filesystem /', u'Memory', u'NTP Time', u'SSH', u'Uptime', u'Check IDM-TOOLS', u'check_aacli', u'check_rs', u'check_coco'], {'comment': u'IdP All in One common services', 'description': u'IDP All in One services'} ),
+] + service_groups
+{% else %}
+active_checks['http'] = [
+  ( (u'^Check IDP MD', {'ssl': 'auto', 'uri': '/idp/shibboleth'}), ['/' + FOLDER_PATH + '/+'], ALL_HOSTS, {'comment': u"Check IdP Metadata reachability", 'description': u'Check IdP Metadata'} ),
+] + active_checks['http']
+
+service_groups = [
+  ( 'idp-only-services', ['/' + FOLDER_PATH + '/+'], ALL_HOSTS, [u'CPU load', u'CPU utilization', u'Check HTTPS', u'Check IDP MD', u'Filesystem /', u'Memory', u'NTP Time', u'SSH', u'Uptime'], {'comment': u'IdP Only common services\n', 'description': u'IDP Only services'} ),
+] + service_groups
+{% endif %}

@@ -1,5 +1,5 @@
 ---
-# file: shib-idp-servers.yml
+# file: elasticsearch-servers.yml
 - hosts: Debian-Elasticsearch
   become: yes
   become_method: sudo

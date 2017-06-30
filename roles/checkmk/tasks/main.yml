@@ -1,0 +1,15 @@
+---
+# tasks file for checkmk
+
+#- name: "Include OS-specific variables."
+#  include_vars: "{{ ansible_os_family }}.yml"
+#  tags: checkmk
+
+- name: "Install Check MK"
+  include: "install.yml"
+  tags: checkmk
+
+- name: "Configure Check MK"
+  include: "configure.yml"
+  tags: checkmk
+

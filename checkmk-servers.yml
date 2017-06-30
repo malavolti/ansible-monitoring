@@ -1,0 +1,11 @@
+---
+# file: checkmk-servers.yml
+- hosts: Debian-Checkmk
+  become: yes
+  become_method: sudo
+  remote_user: debian
+  roles:
+    - common
+    - apache
+    - checkmk
+    - sys-update

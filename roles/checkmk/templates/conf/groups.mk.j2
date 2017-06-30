@@ -1,0 +1,24 @@
+# Created by WATO
+# encoding: utf-8
+
+if type(define_hostgroups) != dict:
+    define_hostgroups = {}
+define_hostgroups.update({
+{% for hstgrp in checkmk['config']['hostgroups'] %}
+'{{ hstgrp['name'] }}': u'{{ hstgrp['alias'] }}',
+{% endfor %}
+})
+
+if type(define_servicegroups) != dict:
+    define_servicegroups = {}
+define_servicegroups.update({
+{% for srvgrp in checkmk['config']['servicegroups'] %}
+'{{ srvgrp['name'] }}': u'{{ srvgrp['alias'] }}',
+{% endfor %}
+})
+
+if type(define_contactgroups) != dict:
+    define_contactgroups = {}
+define_contactgroups.update({'all': u'Everything'})
+
+

@@ -27,7 +27,7 @@
 inventories/*/host_vars/*
 
 # Excluded templates files
-!host_vars/*-template
+!inventories/*/host_vars/*-template
 
 
 # ignore Ansible inventories

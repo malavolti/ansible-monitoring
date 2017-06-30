@@ -6,3 +6,8 @@ elasticsearch2.example.org
 # Put here IP or FQDN of your Kibana Servers
 [Debian-Kibana]
 kibana.example.org
+
+# Put here IP or FQDN of your Check MK Servers
+[Debian-Checkmk]
+checkmk.example.org
+

@@ -147,6 +147,12 @@
                 ProxyPassReverse  / http://localhost:5601/ retry=5
                 RedirectMatch ^/$ https://{{ fqdn }}/
 {% endif %}
+{% if checkmk['config']['site_name'] is defined and checkmk['config']['site_name'] != "" %}
+                # Redirect to /{{ checkmk['config']['site_name'] }}
+                <Directory /var/www/html>
+                  RedirectMatch ^/$ /{{ checkmk['config']['site_name'] }}
+                </Directory>
+{% endif %}
         </VirtualHost>
 </IfModule>
 

@@ -1,0 +1,58 @@
+# Created by ANSIBLE 
+# encoding: utf-8
+
+
+host_contactgroups = [
+  ( 'all', [], ALL_HOSTS, {'description': u'Put all hosts into the contact group "all"'} ),
+] + host_contactgroups
+
+
+extra_service_conf.setdefault('check_interval', [])
+
+extra_service_conf['check_interval'] = [
+  ( 1440, [], ALL_HOSTS, ['Check_MK HW/SW Inventory$'], {'description': u'Restrict HW/SW-Inventory to once a day'} ),
+] + extra_service_conf['check_interval']
+
+
+active_checks.setdefault('http', [])
+
+active_checks['http'] = [
+  ( (u'^Check HTTPS', {'cert_days': (45, 15)}), [], ALL_HOSTS, {'comment': u"Check HTTPS Certificate Expiration.", 'description': u'Check HTTPS Certificate Expiration'} ),
+] + active_checks['http']
+
+
+active_checks.setdefault('ssh', [])
+
+active_checks['ssh'] = [
+  ( {}, [], ALL_HOSTS, {'comment': u'Check SSH connection.\n', 'description': u'Check SSH connection'} ),
+] + active_checks['ssh']
+
+
+ping_levels = [
+  ( {'loss': (80.0, 100.0), 'packets': 6, 'timeout': 20, 'rta': (1500.0, 3000.0)}, ['wan', ], ALL_HOSTS, {'description': u'Allow longer round trip times when pinging WAN hosts'} ),
+] + ping_levels
+
+
+bulkwalk_hosts = [
+  ( ['snmp', '!snmp-v1', ], ALL_HOSTS, {'description': u'Hosts with the tag "snmp-v1" must not use bulkwalk'} ),
+] + bulkwalk_hosts
+
+
+if only_hosts == None:
+    only_hosts = []
+
+only_hosts = [
+  ( ['!offline', ], ALL_HOSTS, {'description': u'Do not monitor hosts with the tag "offline"'} ),
+] + only_hosts
+
+
+host_groups = [
+{% for hstgrp in checkmk['config']['hostgroups'] %}
+  ( '{{ hstgrp['name'] }}', [], ['{{ hstgrp['regexp'] }}'], {'comment': u'{{ hstgrp['comment'] }}', 'description': u'{{ hstgrp['descr'] }}'} ),
+{% endfor %}
+] + host_groups
+
+
+periodic_discovery = [
+  ( {'severity_unmonitored': 1, 'severity_vanished': 0, 'check_interval': 120.0, 'inventory_check_do_scan': True, 'inventory_rediscovery': {'activation': True, 'mode': 2, 'group_time': 900, 'excluded_time': []}}, [], ALL_HOSTS, {'comment': u'Discover and activate new services provided by the CheckMK Agent', 'description': u'Auto-Discovery Rule'} ),
+] + periodic_discovery

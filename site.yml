@@ -2,3 +2,4 @@
 # file: site.yml
 - include: elasticsearch-servers.yml
 - include: kibana-servers.yml
+- include: checkmk-servers.yml

@@ -1,0 +1,47 @@
+---
+# tasks for configure.yml
+
+- name: "Be sure to create the monitoring site"
+  command: "omd create {{ checkmk['config']['site_name'] }}"
+  args:
+    chdir: /opt/omd
+    creates: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}"
+
+- name: "Be sure to start/restart the monitoring site"
+  command: "omd restart {{ checkmk['config']['site_name'] }}"
+  args:
+    chdir: /opt/omd
+  changed_when: false
+
+- name: "Be sure to set the correct password for 'cmkadmin' user"
+  htpasswd:
+   path: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/htpasswd"
+   name: "cmkadmin"
+   password: "{{ checkmk['config']['cmkadmin_pw'] }}"
+   owner: "{{ checkmk['config']['site_name'] }}"
+   group: "{{ checkmk['config']['site_name'] }}"
+   mode: 0660
+
+- include: "create_folder.yml"
+  with_items:
+   - { folder_name: "IdP-All-in-One", folder: "idp-all-in-one" }
+   - { folder_name: "IdP-Only", folder: "idp-only" }
+  vars:
+   folder_name: "{{ item.folder_name }}"
+   folder: "{{ item.folder }}"
+
+- name: "Be sure to set host and service groups"
+  template:
+   src: conf/groups.mk.j2
+   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/conf.d/wato/groups.mk"
+   owner: "{{ checkmk['config']['site_name'] }}"
+   group: "{{ checkmk['config']['site_name'] }}"
+   mode: 0660
+
+- name: "Be sure to set host and service groups"
+  template:
+   src: conf/default-rules.mk.j2
+   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/conf.d/wato/rules.mk"
+   owner: "{{ checkmk['config']['site_name'] }}"
+   group: "{{ checkmk['config']['site_name'] }}"
+   mode: 0660

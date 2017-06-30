@@ -1,0 +1,26 @@
+---
+# tasks for create_folder.yml
+
+- name: "Be sure to create the needed Hosts directories"
+  file:
+   path: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/conf.d/wato/{{ folder }}"
+   owner: "{{ checkmk['config']['site_name'] }}"
+   group: "{{ checkmk['config']['site_name'] }}"
+   mode: 0770
+   state: directory
+
+- name: "Be sure to create the '.wato' file of {{ folder_name }}"
+  template:
+   src: conf/wato.j2
+   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/conf.d/wato/{{ folder }}/.wato"
+   owner: "{{ checkmk['config']['site_name'] }}"
+   group: "{{ checkmk['config']['site_name'] }}"
+   mode: 0644
+
+- name: "Be sure to create the 'rules.mk' file of {{ folder_name }}"
+  template:
+   src: conf/folder-rules.mk.j2
+   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/conf.d/wato/{{ folder }}/rules.mk"
+   owner: "{{ checkmk['config']['site_name'] }}"
+   group: "{{ checkmk['config']['site_name'] }}"
+   mode: 0644

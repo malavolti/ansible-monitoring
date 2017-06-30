@@ -3,7 +3,7 @@
 
 #- name: "Include OS-specific variables."
 #  include_vars: "{{ ansible_os_family }}.yml"
-#  tags: elasticsearch
+#  tags: kibana
 
 - name: "Install Kibana"
   include: "install.yml"

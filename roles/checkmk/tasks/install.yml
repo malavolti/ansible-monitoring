@@ -1,0 +1,36 @@
+---
+# task for install.yml
+- name: "Install gdebi package manager" 
+  apt: 
+   pkg: "gdebi-core"
+   state: latest
+   update_cache: yes
+
+- name: "Install passlib needed for htpasswd ansible module" 
+  apt: 
+   pkg: "python-passlib"
+   state: latest
+   update_cache: yes
+
+- name: "Be sure to load Check MK package to install"
+  copy:
+   src: "files/deb/"
+   dest: "/usr/local/src/"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when: 
+   - ansible_distribution == 'Debian'
+
+- name: "Retrieve Check MK deb name"
+  shell: "ls | grep check-mk-raw"
+  args:
+    chdir: /usr/local/src
+  changed_when: false
+  register: check_mk_deb
+
+- name: "Be sure to install Check MK"
+  command: "gdebi {{ check_mk_deb['stdout'] }} -n"
+  args:
+    chdir: /usr/local/src
+    creates: /opt/omd
