@@ -24,7 +24,7 @@ checkmk:
    - name: "irccs-example"
      alias: "IRCCS-EXAMPLE"
      regexp: "~.*.irccs.example.org"
-     comment: "IRCCS Idenity Providers"
+     comment: "IRCCS Identity Providers"
      descr: "IRCCS IdPs"
    - name: "izs"
      alias: "IZS"
