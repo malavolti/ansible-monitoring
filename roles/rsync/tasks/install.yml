@@ -1,0 +1,7 @@
+---
+# tasks for install
+- name: "Be sure that packages needed are installed"
+  apt:
+   name: "rsync"
+   state: latest
+   update_cache: yes

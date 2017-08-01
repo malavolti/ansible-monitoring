@@ -3,3 +3,5 @@
 - include: elasticsearch-servers.yml
 - include: kibana-servers.yml
 - include: checkmk-servers.yml
+- include: rsyslog-servers.yml
+- include: rsync-servers.yml

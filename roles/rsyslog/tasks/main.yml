@@ -1,0 +1,15 @@
+---
+# tasks file for rsyslog 
+
+#- name: "Include OS-specific variables."
+#  include_vars: "{{ ansible_os_family }}.yml"
+#  tags: checkmk
+
+- name: "Install Rsyslog"
+  include: "install.yml"
+  tags: checkmk
+
+- name: "Configure Rsyslog"
+  include: "configure.yml"
+  tags: checkmk
+

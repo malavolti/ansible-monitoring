@@ -106,6 +106,7 @@
 - name: "Be sure to configure SSL if needed"
   include: "configure_ssl.yml"
   when: 
+   - common is defined
    - common['ssl'] is defined
    - common['ssl'] in ["True","true","Yes","yes"]
   tags: common

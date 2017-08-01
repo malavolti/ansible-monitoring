@@ -1,0 +1,14 @@
+---
+# tasks file for rsync
+
+#- name: "Include OS-specific variables."
+#  include_vars: "{{ ansible_os_family }}.yml"
+#  tags: rsync
+
+- name: "Install Rsync"
+  include: "install.yml"
+  tags: rsync
+
+- name: "Configure Rsync"
+  include: "configure.yml"
+  tags: rsync

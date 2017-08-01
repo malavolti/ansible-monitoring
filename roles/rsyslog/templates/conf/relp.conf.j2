@@ -1,0 +1,69 @@
+# Load RELP input module and ElasticSearch input module
+# http://www.rsyslog.com/doc/v8-stable/configuration/modules/imrelp.html?highlight=imrelp
+module(load="imrelp") # needs to be done just once
+module(load="omelasticsearch")
+
+# http://www.rsyslog.com/doc/v8-stable/configuration/properties.html
+# http://www.rsyslog.com/doc/v8-stable/configuration/templates.html
+template(name="RemoteSysLogSavePath" type="list") {
+    constant(value="{{ common['volumes'][0]['volume_path'] }}/var/log/")
+    property(name="hostname")
+    constant(value="/")
+    property(name="timegenerated" dateFormat="year")
+    constant(value="/")
+    property(name="timegenerated" dateFormat="month")
+    constant(value="/")
+    constant(value="syslog.log.")
+    property(name="timegenerated" dateFormat="year")
+    property(name="timegenerated" dateFormat="month")
+    property(name="timegenerated" dateFormat="day")
+}
+
+template(name="RemoteLogSavePath" type="list") {
+    constant(value="{{ common['volumes'][0]['volume_path'] }}/var/log/")
+    property(name="hostname")
+    constant(value="/")
+    property(name="timegenerated" dateFormat="year")
+    constant(value="/")
+    property(name="timegenerated" dateFormat="month")
+    constant(value="/")
+    property(name="programname")
+    constant(value=".log.")
+    property(name="timegenerated" dateFormat="year")
+    property(name="timegenerated" dateFormat="month")
+    property(name="timegenerated" dateFormat="day")
+}
+
+template(name="testTemplate" type="list" option.json="on") {
+    constant(value="{")
+       constant(value="\"message\":\"")         property(name="msg")                                  constant(value="\",")
+       constant(value="\"fromhost\":\"")        property(name="hostname")                             constant(value="\",")
+       constant(value="\"facility\":\"")        property(name="syslogfacility-text")                  constant(value="\",")
+       constant(value="\"priority\":\"")        property(name="syslogpriority-text")                  constant(value="\",")
+       constant(value="\"timereported\":\"")    property(name="timereported" dateFormat="rfc3339")    constant(value="\",")
+       constant(value="\"timegenerated\":\"")   property(name="timegenerated" dateFormat="rfc3339")   constant(value="\",")
+       constant(value="\"severity\":\"")        property(name="syslogseverity-text")                  constant(value="\",")
+       constant(value="\"syslogtag\":\"")       property(name="syslogtag")                            constant(value="\"")
+    constant(value="}")
+}
+
+# define new ruleset and add rules to it
+# http://www.rsyslog.com/doc/v8-stable/configuration/modules/omfile.html
+ruleset(name="remote") {
+   if ( $syslogfacility-text == "local0" )
+   then {
+      action(type="omfile" dynaFile="RemoteLogSavePath")
+   } else {
+      action(type="omfile" dynaFile="RemoteSysLogSavePath")
+   }
+   action(
+      type="omelasticsearch"
+      server="192.168.80.4"
+      serverport="9200"
+      template="testTemplate"
+   )
+}
+
+# http://www.rsyslog.com/doc/v8-stable/configuration/modules/imrelp.html?highlight=imrelp
+# link the input to the rulset 'remote'
+input(type="imrelp" port="20514" ruleset="remote")

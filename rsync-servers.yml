@@ -1,0 +1,10 @@
+---
+# file: rsync-servers.yml
+- hosts: Debian-Rsync
+  become: yes
+  become_method: sudo
+  remote_user: debian
+  roles:
+    - common
+    - rsync
+    - sys-update
