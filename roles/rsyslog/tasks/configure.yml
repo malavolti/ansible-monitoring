@@ -16,10 +16,14 @@
 
 - name: "Be sure to configure correctly the Rsyslog server"
   template:
-   src: conf/relp.conf.j2
+   src: "conf/relp.conf.j2"
    dest: "/etc/rsyslog.d/22-relp.conf"
    owner: "root"
    group: "root"
    mode: 0644
   notify:
    - "Restart Rsyslog"
+  when:
+   - common is defined
+   - common['volumes'][0]['volume_path'] is defined
+   - common['volumes'][0]['volume_path'] != ""

@@ -1,0 +1,18 @@
+---
+# file: host_vars/##FULL.VM.QUALIFIED.DOMAIN.NAME##.yml
+
+# Machine Variables
+
+fqdn: "data-backups.example.org"
+
+common:
+ volumes:
+  - volume_dev: "/dev/vdc"
+    volume_path: "/data"
+    volume_fs: "ext4"
+
+# rsync Variables
+
+rsync:
+ config:
+  ssh_pub_key: "{{ lookup('file', '/opt/ansible-shibboleth/roles/rsync/files/ssh/ssh_pub_key') }}"
