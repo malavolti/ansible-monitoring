@@ -25,3 +25,4 @@
    enabled: yes
    state: started
    masked: no
+  changed_when: false

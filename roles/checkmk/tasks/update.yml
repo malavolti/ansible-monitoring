@@ -1,0 +1,46 @@
+---
+- name: "Retrieve Check_MK updated version from the file loaded"
+  set_fact:
+   upd_version: "{{ check_mk_deb['stdout'] | regex_replace('^.*([\\d+].[\\d+].[\\d+]p\\d+).*?$', '\\1') }}"
+
+- name: "Retrieve OMD version"
+  command: "omd version {{ checkmk['config']['site_name'] }}"
+  changed_when: false
+  register: omd_version
+
+- name: "Retrieve the OMD current version"
+  set_fact:
+   omd_current_version: "{{ omd_version | regex_replace('^.*([\\d+].[\\d+].[\\d+]p\\d+).*?$', '\\1') }}"
+
+- debug:
+   msg: "upd_version: {{ upd_version }}"
+
+- debug:
+   msg: "omd_version: {{ omd_version }}"
+
+- debug:
+   msg: "omd_current_version: {{ omd_current_version }}"
+
+- name: "Update Check MK version"
+  command: "{{ item }}"
+  with_items:
+   - "gdebi {{ check_mk_deb['stdout'] }} -n"
+   - "omd stop {{ checkmk['config']['site_name'] }}"
+   - "omd -f update --conflict=install {{ checkmk['config']['site_name'] }} {{ upd_version }}"
+   - "omd start {{ checkmk['config']['site_name'] }}"
+  when:
+   - omd_current_version != upd_version
+
+- name: "Retrive Check_MK DEB name to uninstall"
+  shell: "ls | head -1"
+  args:
+   chdir: /usr/local/src
+  changed_when: false
+  register: uninstall_deb
+  when:
+   - omd_current_version != upd_version
+
+- name: "Uninstall the previous version"
+  command: "dpkg --purge {{ uninstall_deb }}"
+  when:
+   - omd_current_version != upd_version

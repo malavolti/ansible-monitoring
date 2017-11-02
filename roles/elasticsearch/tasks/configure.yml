@@ -1,12 +1,21 @@
 ---
 # tasks for configure.yml
-- name: "Be sure to configure elasticsearch for systemd"
-  replace:
-   dest: "/usr/lib/systemd/system/elasticsearch.service"
-   regexp: "{{ item['regexp'] }}"
-   replace: "{{ item['replace'] }}"
-  with_items:
-   - { regexp: "#LimitMEMLOCK=infinity", replace: "LimitMEMLOCK=infinity" }
+- name: "Be sure to have created needed directory for elastichsearch custom configurations"
+  file:
+   path: "/etc/systemd/system/elasticsearch.service.d"
+   state: directory
+   mode: 0755
+   owner: "elasticsearch"
+   group: "elasticsearch"
+
+- name: "Apply elasticsearch custom configurations"
+  template:
+   src: "conf/override.conf.j2"
+   dest: "/etc/systemd/system/elasticsearch.service.d/override.conf"
+   owner: "root"
+   group: "elasticsearch"
+  notify:
+   - "Restart Elasticsearch"
 
 - name: "Be sure to configure elasticsearch default"
   replace:
@@ -22,6 +31,8 @@
    path: "{{ item }}" 
    state: directory
    mode: 0755
+   owner: "elasticsearch"
+   group: "elasticsearch"
   with_items:
    - "{{ common['volumes'][0]['volume_path'] }}/log"
    - "{{ common['volumes'][0]['volume_path'] }}/log/elasticsearch"

@@ -104,7 +104,7 @@
   tags: common
 
 - name: "Be sure to configure SSL if needed"
-  include: "configure_ssl.yml"
+  import_tasks: "configure_ssl.yml"
   when: 
    - common is defined
    - common['ssl'] is defined

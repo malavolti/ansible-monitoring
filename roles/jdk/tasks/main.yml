@@ -5,11 +5,11 @@
   tags: jdk
 
 - name: "Install OpenJDK"
-  include: "install_openjdk_Debian.yml"
+  import_tasks: "install_openjdk_Debian.yml"
   when: jdk_type == "openjdk" and ansible_os_family == 'Debian'
   tags: jdk
 
 - name: "Install Oracle JDK"
-  include: "install_oraclejdk_Debian.yml"
+  import_tasks: "install_oraclejdk_Debian.yml"
   when: jdk_type == "oraclejdk" and ansible_os_family == 'Debian'
   tags: jdk

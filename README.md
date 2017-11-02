@@ -24,13 +24,17 @@ Ansible Playbook to manage some monitoring tools
    * ```cd /opt/ansible-monitoring```
    * ```openssl rand -base64 64 > .vault_pass.txt```
 
-4. Create the right inventory file/files about your IdP servers by following the template provided:
+4. Create the right inventory file/files about your servers by following the template provided:
    * ```inventories/development/development.ini``` for your development servers.
    * ```inventories/production/production.ini``` for your production servers.
    * ```inventories/test/test.ini``` for your test servers.
 
 5. Create the monitoring configuration file by copying/filling the templates:
-   * ```/opt/ansible-monitoring/#_environment_#/host_vars/FQDN.yml-template```
+   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-checkmk-template```
+   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-elasticsearch-template```
+   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-kibana-template```
+   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-data-backups-template```
+   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-rsyslog-template```
 
    into proper ```/opt/ansible-monitoring/#_environment_#/host_vars/FQDN.yml``` file.
    This file will provide to Ansible all variables needed to instance each server.

@@ -6,9 +6,9 @@
 #  tags: kibana
 
 - name: "Install Kibana"
-  include: "install.yml"
+  import_tasks: "install.yml"
   tags: kibana
 
 - name: "Configure Kibana"
-  include: "configure.yml"
+  import_tasks: "configure.yml"
   tags: kibana

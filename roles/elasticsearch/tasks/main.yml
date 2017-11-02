@@ -6,9 +6,9 @@
 #  tags: elasticsearch
 
 - name: "Install Elasticsearch"
-  include: "install.yml"
+  import_tasks: "install.yml"
   tags: elasticsearch
 
 - name: "Configure Elasticsearch"
-  include: "configure.yml"
+  import_tasks: "configure.yml"
   tags: elasticsearch

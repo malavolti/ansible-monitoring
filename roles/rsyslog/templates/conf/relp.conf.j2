@@ -6,7 +6,11 @@ module(load="omelasticsearch")
 # http://www.rsyslog.com/doc/v8-stable/configuration/properties.html
 # http://www.rsyslog.com/doc/v8-stable/configuration/templates.html
 template(name="RemoteSysLogSavePath" type="list") {
+{% if common['volumes'][0]['volume_path'] is defined and common['volumes'][0]['volume_path'] != '' %}
     constant(value="{{ common['volumes'][0]['volume_path'] }}/var/log/")
+{% else%}
+    constant(value="/var/log/")
+{% endif %}
     property(name="hostname")
     constant(value="/")
     property(name="timegenerated" dateFormat="year")
@@ -20,7 +24,11 @@ template(name="RemoteSysLogSavePath" type="list") {
 }
 
 template(name="RemoteLogSavePath" type="list") {
+{% if common['volumes'][0]['volume_path'] is defined and common['volumes'][0]['volume_path'] != '' %}
     constant(value="{{ common['volumes'][0]['volume_path'] }}/var/log/")
+{% else%}
+    constant(value="/var/log/")
+{% endif %}
     property(name="hostname")
     constant(value="/")
     property(name="timegenerated" dateFormat="year")
@@ -58,7 +66,7 @@ ruleset(name="remote") {
    }
    action(
       type="omelasticsearch"
-      server="192.168.80.4"
+      server="{{ elastic_1_ip_priv }}"
       serverport="9200"
       template="testTemplate"
    )

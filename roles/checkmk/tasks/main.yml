@@ -6,10 +6,14 @@
 #  tags: checkmk
 
 - name: "Install Check MK"
-  include: "install.yml"
+  import_tasks: "install.yml"
   tags: checkmk
 
 - name: "Configure Check MK"
-  include: "configure.yml"
+  import_tasks: "configure.yml"
   tags: checkmk
+
+- name: "Update Check MK"
+  import_tasks: "update.yml"
+  tags: checkmk_upd
 

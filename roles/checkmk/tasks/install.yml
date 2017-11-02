@@ -23,11 +23,14 @@
    - ansible_distribution == 'Debian'
 
 - name: "Retrieve Check MK deb name"
-  shell: "ls | grep check-mk-raw"
+  shell: "ls | tail -n 1 | grep check-mk-raw"
   args:
     chdir: /usr/local/src
   changed_when: false
   register: check_mk_deb
+
+- debug:
+   msg: "check_mk_deb: {{ check_mk_deb ['stdout'] }}"
 
 - name: "Be sure to install Check MK"
   command: "gdebi {{ check_mk_deb['stdout'] }} -n"

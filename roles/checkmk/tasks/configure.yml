@@ -22,7 +22,7 @@
    group: "{{ checkmk['config']['site_name'] }}"
    mode: 0660
 
-- include: "create_folder.yml"
+- include_tasks: "create_folder.yml"
   with_items:
    - { folder_name: "IdP-All-in-One", folder: "idp-all-in-one" }
    - { folder_name: "IdP-Only", folder: "idp-only" }

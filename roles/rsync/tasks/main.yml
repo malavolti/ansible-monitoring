@@ -6,9 +6,9 @@
 #  tags: rsync
 
 - name: "Install Rsync"
-  include: "install.yml"
+  import_tasks: "install.yml"
   tags: rsync
 
 - name: "Configure Rsync"
-  include: "configure.yml"
+  import_tasks: "configure.yml"
   tags: rsync

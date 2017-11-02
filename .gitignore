@@ -32,3 +32,8 @@ inventories/*/host_vars/*
 
 # ignore Ansible inventories
 *.ini
+
+
+# ignore all directory that contains certificates and keys except "sample-FQDN-dir/"
+roles/common/files/*
+!roles/common/files/sample-FQDN-dir/

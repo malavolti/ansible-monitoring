@@ -6,10 +6,10 @@
 #  tags: checkmk
 
 - name: "Install Rsyslog"
-  include: "install.yml"
+  import_tasks: "install.yml"
   tags: checkmk
 
 - name: "Configure Rsyslog"
-  include: "configure.yml"
+  import_tasks: "configure.yml"
   tags: checkmk
 

@@ -5,9 +5,9 @@
   tags: httpd
 
 - name: "Install Apache"
-  include: httpd-install.yml
+  import_tasks: httpd-install.yml
   tags: httpd
 
 - name: "Configure Apache"
-  include: httpd-configure.yml
+  import_tasks: httpd-configure.yml
   tags: httpd

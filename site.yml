@@ -1,7 +1,7 @@
 ---
 # file: site.yml
-- include: elasticsearch-servers.yml
-- include: kibana-servers.yml
-- include: checkmk-servers.yml
-- include: rsyslog-servers.yml
-- include: rsync-servers.yml
+- import_playbook: elasticsearch-servers.yml
+- import_playbook: kibana-servers.yml
+- import_playbook: checkmk-servers.yml
+- import_playbook: rsyslog-servers.yml
+- import_playbook: rsync-servers.yml
