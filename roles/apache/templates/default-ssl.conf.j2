@@ -1,4 +1,5 @@
 <IfModule mod_ssl.c>
+        SSLStaplingCache        shmcb:/var/run/ocsp(128000)
         <VirtualHost _default_:443>
                 ServerName {{ fqdn }}
                 ServerAdmin {{ apache['admin_email'] }}
@@ -24,15 +25,21 @@
                 #   SSL Engine Switch:
                 #   Enable/Disable SSL for this virtual host.
                 SSLEngine on
-                SSLProtocol all -SSLv2 -SSLv3 -TLSv1
+                SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+                SSLCipherSuite "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
 
-                SSLCipherSuite "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:kEDH+AESGCM:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA256:ECDHE-ECDSA-AES256-SHA:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA256:AES256-GCM-SHA384:!3DES:!DES:!DHE-RSA-AES128-GCM-SHA256:!DHE-RSA-AES256-SHA:!EDE3:!EDH-DSS-CBC-SHA:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC-SHA:!EDH-RSA-DES-CBC3-SHA:!EXP-EDH-DSS-DES-CBC-SHA:!EXP-EDH-RSA-DES-CBC-SHA:!EXPORT:!MD5:!PSK:!RC4-SHA:!aNULL:!eNULL"
                 SSLHonorCipherOrder on
 
                 # Disable SSL Compression
                 SSLCompression Off
+
+                # OCSP Stapling, only in httpd 2.3.3 and later
+                SSLUseStapling          on
+                SSLStaplingResponderTimeout 5
+                SSLStaplingReturnResponderErrors off
+
                 # Enable HTTP Strict Transport Security with a 2 year duration
-                Header always set Strict-Transport-Security "max-age=63072000;includeSubDomains"
+                Header always set Strict-Transport-Security "max-age=63072000;includeSubDomains;preload"
 
                 #   A self-signed (snakeoil) certificate can be created by installing
                 #   the ssl-cert package. See
