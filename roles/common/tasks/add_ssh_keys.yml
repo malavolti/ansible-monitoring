@@ -1,0 +1,16 @@
+- name: "Be sure that the private ssh key is in /root/.ssh/"
+  copy:
+    src: "files/{{ fqdn }}/id_rsa"
+    dest: /root/.ssh/id_rsa
+    owner: root
+    group: root
+    mode: 0600
+    
+- name: "Be sure that the public ssh key is in /root/.ssh/"
+  copy:
+    src: "files/{{ fqdn }}/id_rsa.pub"
+    dest: /root/.ssh/id_rsa.pub
+    owner: root
+    group: root
+    mode: 0644
+

@@ -110,3 +110,12 @@
    - common['ssl'] is defined
    - common['ssl'] in ["True","true","Yes","yes"]
   tags: common
+
+- name: "Be sure to add ssh keys if needed"
+  import_tasks: "add_ssh_keys.yml"
+  when:
+    - common is defined
+    - common['ssh_keys'] is defined
+    - common['ssh_keys'] == "True"
+  tags: common
+                  
