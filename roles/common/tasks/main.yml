@@ -116,6 +116,5 @@
   when:
     - common is defined
     - common['ssh_keys'] is defined
-    - common['ssh_keys'] == "True"
-  tags: common
-                  
+    - common['ssh_keys'] in ["True","true"]
+  tags: common 

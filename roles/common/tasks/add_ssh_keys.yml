@@ -1,3 +1,6 @@
+---
+# tasks for add_ssh_keys
+
 - name: "Be sure that the private ssh key is in /root/.ssh/"
   copy:
     src: "files/{{ fqdn }}/id_rsa"
@@ -13,4 +16,3 @@
     owner: root
     group: root
     mode: 0644
-
