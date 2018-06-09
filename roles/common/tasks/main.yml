@@ -111,10 +111,9 @@
    - common['ssl'] in ["True","true","Yes","yes"]
   tags: common
 
-- name: "Be sure to add ssh keys if needed"
-  import_tasks: "add_ssh_keys.yml"
+- name: "Be sure to configure external backup if needed"
+  import_tasks: "ext-backup.yml"
   when:
     - common is defined
-    - common['ssh_keys'] is defined
-    - common['ssh_keys'] in ["True","true"]
+    - common['ext-backup'] is defined
   tags: common 
