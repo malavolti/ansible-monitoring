@@ -6,15 +6,17 @@
 fqdn: "checkmk.example.org"
 
 common:
-   ssl: "True"
-   ca: "checkmk.example.org.crt"
-   ssl_cert: "checkmk.example.org.crt"
-   ssl_key: "checkmk.example.org.key"
+ ssl: "True"
+ ca: "checkmk.example.org.crt"
+ ssl_cert: "checkmk.example.org.crt"
+ ssl_key: "checkmk.example.org.key"
 
 apache:
    admin_email: "support@example.org"
 
 # checkmk Variables
+# Remove checkmk['config']['users']['api'] part
+# to avoid creation of an API User for Check_MK
 
 checkmk:
  config:
@@ -36,3 +38,8 @@ checkmk:
      alias: "IdP All in One services"
    - name: "idp-only-services"
      alias: "IdP Only services"
+  users:
+   api:
+    user_name: "apiuser"
+    user_token: "#_RANDOM_STRING_1_#"
+    htpasswd: "#_RANDOM_STRING_2_#"

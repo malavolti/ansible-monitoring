@@ -1,0 +1,12 @@
+multisite_users.update({
+u'cmkadmin': {'alias': u'cmkadmin', 'locked': False, 'roles': ['admin']},
+u'apiuser': {'alias': u'API User',
+              'automation_secret': '{{ checkmk['config']['users']['api']['user_token'] }}',
+              'force_authuser': False,
+              'force_authuser_webservice': False,
+              'locked': True,
+              'roles': ['api_role'],
+              'start_url': 'dashboard.py'}
+})
+
+

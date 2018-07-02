@@ -6,33 +6,40 @@
 fqdn: "checkmk.example.org"
 
 common:
-   ssl: "True"
-   ca: "checkmk.example.org.crt"
-   ssl_cert: "checkmk.example.org.crt"
-   ssl_key: "checkmk.example.org.key"
+ ssl: "True"
+ ca: "checkmk.example.org.crt"
+ ssl_cert: "checkmk.example.org.crt"
+ ssl_key: "checkmk.example.org.key"
 
 apache:
    admin_email: "support@example.org"
 
 # checkmk Variables
+# Remove checkmk['config']['users']['api'] part
+# to avoid creation of an API User for Check_MK
 
 checkmk:
  config:
   site_name: "{{ checkmk_site }}"
   cmkadmin_pw: "cmkadmin_user_password"
   hostgroups:
-   - name: "type1-example"
-     alias: "TYPE1-EXAMPLE"
-     regexp: "~.*.type1.example.org"
-     comment: "TYPE1 Identity Providers"
-     descr: "TYPE1 IdPs"
-   - name: "type2-example"
-     alias: "TYPE2-example"
-     regexp: "~.*.type2.example.org"
-     comment: "TYPE2 Identity Providers"
-     descr: "TYPE2 IdPs"
+   - name: "irccs-example"
+     alias: "IRCCS-EXAMPLE"
+     regexp: "~.*.irccs.example.org"
+     comment: "IRCCS Identity Providers"
+     descr: "IRCCS IdPs"
+   - name: "izs"
+     alias: "IZS"
+     regexp: "~.*.izs.example.org"
+     comment: "IZS Identity Providers"
+     descr: "IZS IdPs"
   servicegroups:
    - name: "idp-all-in-one-services"
      alias: "IdP All in One services"
    - name: "idp-only-services"
      alias: "IdP Only services"
+  users:
+   api:
+    user_name: "apiuser"
+    user_token: "#_RANDOM_STRING_1_#"
+    htpasswd: "#_RANDOM_STRING_2_#"
