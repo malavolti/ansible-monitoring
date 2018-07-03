@@ -1,0 +1,11 @@
+---
+# tasks for postfix clean
+- name: "Remove needed postfix packages"
+  apt: 
+   name: "{{ item }}"
+   purge: yes
+   state: absent
+  with_items:
+   - "postfix"
+   - "mailutils"
+

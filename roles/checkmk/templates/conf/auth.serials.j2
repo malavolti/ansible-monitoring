@@ -1,0 +1,7 @@
+cmkadmin:0
+{% if checkmk['config']['users']['mail'] and checkmk['config']['users']['mail']['user_name'] != "" and checkmk['config']['users']['mail']['user_pw'] != "" %}
+mailuser:0
+{% endif %}
+{% if checkmk['config']['users']['api'] and checkmk['config']['users']['api']['user_name'] != "" and checkmk['config']['users']['api']['user_token'] != "" %}
+apiuser:1
+{% endif %}

@@ -12,16 +12,16 @@
   set_fact:
    omd_current_version: "{{ omd_version | regex_replace('^.*([\\d+].[\\d+].[\\d+]p\\d+).*?$', '\\1') }}"
 
-- debug:
-   msg: "upd_version: {{ upd_version }}"
+#- debug:
+#   msg: "upd_version: {{ upd_version }}"
 
-- debug:
-   msg: "omd_version: {{ omd_version }}"
+#- debug:
+#   msg: "omd_version: {{ omd_version }}"
 
-- debug:
-   msg: "omd_current_version: {{ omd_current_version }}"
+#- debug:
+#   msg: "omd_current_version: {{ omd_current_version }}"
 
-- name: "Update Check MK version"
+- name: "Update Check MK version to {{ upd_version }}"
   command: "{{ item }}"
   with_items:
    - "gdebi {{ check_mk_deb['stdout'] }} -n"

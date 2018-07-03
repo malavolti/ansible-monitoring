@@ -1,5 +1,6 @@
 multisite_users.update({
-u'cmkadmin': {'alias': u'cmkadmin', 'locked': False, 'roles': ['admin']},
+u'cmkadmin': {'alias': u'cmkadmin', 'locked': False, 'roles': ['admin']}
+{% if checkmk['config']['users']['api'] and checkmk['config']['users']['api']['user_name'] != "" and checkmk['config']['users']['api']['user_token'] != "" %},
 u'apiuser': {'alias': u'API User',
               'automation_secret': '{{ checkmk['config']['users']['api']['user_token'] }}',
               'force_authuser': False,
@@ -7,6 +8,15 @@ u'apiuser': {'alias': u'API User',
               'locked': True,
               'roles': ['api_role'],
               'start_url': 'dashboard.py'}
+{% endif %}
+{% if checkmk['config']['users']['mail'] and checkmk['config']['users']['mail']['user_name'] != "" and checkmk['config']['users']['mail']['user_pw'] != "" %},
+ u'mailuser': {'alias': u'Mail User',
+               'force_authuser': False,
+               'force_authuser_webservice': False,
+               'locked': True,
+               'roles': ['mail_role'],
+               'start_url': 'dashboard.py'}
+{% endif %}
 })
 
 

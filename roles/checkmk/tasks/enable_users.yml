@@ -9,56 +9,59 @@
    group: "{{ checkmk['config']['site_name'] }}"
    mode: "0660"
 
-- name: "Change Check_MK 'auth.php' file"
-  lineinfile:
-   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/var/check_mk/wato/auth/auth.php"
-   regexp: "include\\('custom_auth.php'\\);"
-   line: "    include('custom_auth.php');"
-   insertafter: '^[$]mk_roles'
-   backup: yes
-   owner: "{{ checkmk['config']['site_name'] }}"
-   group: "{{ checkmk['config']['site_name'] }}"
-   mode: "0644"
-   state: present
-
 - name: "Add custom User's Roles"
   template:
    src: "conf/custom-auth.php.j2"
-   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/var/check_mk/wato/auth/custom-auth.php"
+   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/var/check_mk/wato/auth/auth.php"
    owner: "{{ checkmk['config']['site_name'] }}"
    group: "{{ checkmk['config']['site_name'] }}"
    mode: "0644"
 
-- name: "Add API User to Check_MK 'auth.serials'"
-  lineinfile:
+- name: "Add Useris to Check_MK 'auth.serials'"
+  template:
+   src: "conf/auth.serials.j2"
    dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/auth.serials"
-   regexp: "apiuser:1"
-   line: "apiuser:1"
-   insertafter: '^cmkadmin:0'
-   backup: yes
    owner: "{{ checkmk['config']['site_name'] }}"
    group: "{{ checkmk['config']['site_name'] }}"
    mode: "0644"
-   state: present
 
-- name: "Be sure to disable password for 'apiuser' user"
+- name: "Be sure to enable access for API user"
   htpasswd:
    path: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/htpasswd"
-   name: "apiuser"
-   password: "!{{ checkmk['config']['users']['api']['htpasswd'] }}"
+   name: "{{ checkmk['config']['users']['api']['user_name'] }}"
+   password: "{{ checkmk['config']['users']['api']['htpasswd'] }}"
+   crypt_scheme: "plaintext"
    owner: "{{ checkmk['config']['site_name'] }}"
    group: "{{ checkmk['config']['site_name'] }}"
    mode: 0660
+  when:
+   - checkmk['config']['users']['api'] is defined
+   - checkmk['config']['users']['api']['user_name'] != ""
+   - checkmk['config']['users']['api']['htpasswd'] != ""
 
-- name: "Add API User to Check_MK 'contacts.mk'"
+- name: "Be sure to disable access for Mail user"
+  htpasswd:
+   path: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/htpasswd"
+   name: "{{ checkmk['config']['users']['mail']['user_name'] }}"
+   password: "!{{ checkmk['config']['users']['mail']['user_pw'] }}"
+   crypt_scheme: "plaintext"
+   owner: "{{ checkmk['config']['site_name'] }}"
+   group: "{{ checkmk['config']['site_name'] }}"
+   mode: 0660
+  when:
+   - checkmk['config']['users']['mail'] is defined
+   - checkmk['config']['users']['mail']['user_name'] != ""
+   - checkmk['config']['users']['mail']['user_pw'] != ""
+
+- name: "Add Users to Check_MK 'contacts.mk'"
   template:
    src: "conf/custom-contacts.mk.j2"
-   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/conf.d/wato/custom-contacts.mk"
+   dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/conf.d/wato/contacts.mk"
    owner: "{{ checkmk['config']['site_name'] }}"
    group: "{{ checkmk['config']['site_name'] }}"
    mode: 0660
 
-- name: "Add API User to Check_MK 'users.mk'"
+- name: "Add Users to Check_MK 'users.mk'"
   template:
    src: "conf/custom-users.mk.j2"
    dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/check_mk/multisite.d/wato/users.mk"

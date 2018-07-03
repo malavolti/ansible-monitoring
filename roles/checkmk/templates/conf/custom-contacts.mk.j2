@@ -1,11 +1,19 @@
-contacts.update({u'apiuser': {'alias': u'API User',
-              'contactgroups': [],
-              'disable_notifications': False,
-              'email': u'',
-              'host_notification_options': 'durfs',
-              'locked_attributes': [],
-              'notification_method': 'email',
-              'notification_period': '24X7',
-              'notifications_enabled': False,
-              'pager': '',
-              'service_notification_options': 'wucrfs'})
+contacts.update({
+ u'cmkadmin': {'alias': u'cmkadmin'}
+{% if checkmk['config']['users']['api'] and checkmk['config']['users']['api']['user_name'] != "" and checkmk['config']['users']['api']['user_token'] != "" %},
+ u'apiuser': {'alias': u'API User'}
+{% endif %}
+{% if checkmk['config']['users']['mail'] and checkmk['config']['users']['mail']['user_name'] != "" and checkmk['config']['users']['mail']['user_pw'] != "" %},
+ u'mailuser': {'alias': u'Mail User',
+               'contactgroups': ['all'],
+               'disable_notifications': False,
+               'email': u'{{ checkmk['config']['users']['mail']['user_address'] }}',
+               'host_notification_options': 'durfs',
+               'locked_attributes': [],
+               'notification_method': 'email',
+               'notification_period': '24X7',
+               'notifications_enabled': True,
+               'pager': '',
+               'service_notification_options': 'wucrfs'}
+{% endif %}
+})

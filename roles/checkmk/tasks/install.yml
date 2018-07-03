@@ -1,16 +1,22 @@
 ---
 # task for install.yml
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+  tags: common
+
 - name: "Install gdebi package manager" 
   apt: 
    pkg: "gdebi-core"
    state: latest
-   update_cache: yes
+   install_recommends: no
 
 - name: "Install passlib needed for htpasswd ansible module" 
   apt: 
    pkg: "python-passlib"
    state: latest
-   update_cache: yes
+   install_recommends: no
 
 - name: "Be sure to load Check MK package to install"
   copy:
@@ -29,10 +35,10 @@
   changed_when: false
   register: check_mk_deb
 
-- debug:
-   msg: "check_mk_deb: {{ check_mk_deb ['stdout'] }}"
+#- debug:
+#   msg: "check_mk_deb: {{ check_mk_deb ['stdout'] }}"
 
-- name: "Be sure to install Check MK"
+- name: "Be sure to install '{{ check_mk_deb['stdout'] }}'"
   command: "gdebi {{ check_mk_deb['stdout'] }} -n"
   args:
     chdir: /usr/local/src

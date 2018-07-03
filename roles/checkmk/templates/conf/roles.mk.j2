@@ -1,5 +1,7 @@
-roles.update({'admin': {'alias': 'Administrator', 'builtin': True, 'permissions': {}},
+roles.update({
+ 'admin': {'alias': 'Administrator', 'builtin': True, 'permissions': {}},
  'guest': {'alias': 'Guest user', 'builtin': True, 'permissions': {}},
+{% if checkmk['config']['users']['api'] and checkmk['config']['users']['api']['user_name'] != "" and checkmk['config']['users']['api']['user_token'] != "" %}
  'api_role': {'alias': u'API User Role',
               'basedon': 'guest',
               'builtin': False,
@@ -16,6 +18,13 @@ roles.update({'admin': {'alias': 'Administrator', 'builtin': True, 'permissions'
                               'wato.see_all_folders': True,
                               'wato.services': True,
                               'wato.use': True}},
+{% endif %}
  'user': {'alias': 'Normal monitoring user',
           'builtin': True,
-          'permissions': {}}})
+          'permissions': {}}{% if checkmk['config']['users']['mail'] and checkmk['config']['users']['mail']['user_name'] != "" and checkmk['config']['users']['mail']['user_pw'] != "" %},
+ 'mail_role': {'alias': u'Mail User Role',
+               'basedon': 'user',
+               'builtin': False,
+               'permissions': {}}
+{% endif %}
+})

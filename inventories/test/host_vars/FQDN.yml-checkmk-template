@@ -15,8 +15,8 @@ apache:
    admin_email: "support@example.org"
 
 # checkmk Variables
-# Remove checkmk['config']['users']['api'] part
-# to avoid creation of an API User for Check_MK
+# Remove "checkmk['config']['users']['api']" part to avoid creation of an API User for Check_MK
+# Remove "checkmk['config']['users']['mail']" part and "postfix" to avoid mail notification for Check_MK
 
 checkmk:
  config:
@@ -41,5 +41,15 @@ checkmk:
   users:
    api:
     user_name: "apiuser"
-    user_token: "#_RANDOM_STRING_1_#"
-    htpasswd: "#_RANDOM_STRING_2_#"
+    user_token: "#_RANDOM_API_TOKEN_#"
+    htpasswd: "#_RANDOM_STRING_1_#"
+   mail:
+    user_name: "mailuser"
+    user_pw: "#_RANDOM_STRING_2_#"
+    user_address: "#_mail_address_#"
+
+postfix:
+ mailname: "{{ fqdn }}"
+ main_mailer_type: "Satellite system"
+ smtp_relay_host: "#_smtp.server.fqdn_#"
+ state: "present"

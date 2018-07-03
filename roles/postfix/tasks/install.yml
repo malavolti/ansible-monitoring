@@ -1,0 +1,44 @@
+---
+# tasks for postfix install
+
+- name: "Install 'debconf-utils' package"
+  apt:
+   name: "debconf-utils"
+   install_recommends: no
+   cache_valid_time: 3600
+   state: latest
+
+- name: "Check if debconf-get-selections has parameters for unattended Postfix installation and store the result on 'debconf' ansible variable"
+  shell: (debconf-get-selections | grep postfix); echo $?
+  register: debconf
+  ignore_errors: yes
+  changed_when: false
+
+- name: "Set Postfix unattended installation parameters"
+  debconf:
+   name: "postfix"
+   question: "{{ item.key }}"
+   vtype: "{{ item.type }}"
+   value: "{{ item.value }}"
+  with_items:
+   - key: postfix/mailname
+     type: string 
+     value: "{{ postfix['mailname']|default('localhost') }}"
+   - key: postfix/relayhost
+     type: string
+     value: "{{ postfix['smtp_relay_host']|default('') }}"
+   - key: postfix/main_mailer_type
+     type: string
+     value: "{{ postfix['main_mailer_type']|default('Satellite system') }}"
+  when: debconf.stdout == "1"
+
+- name: "Install needed postfix packages"
+  apt: 
+   name: "{{ item }}"
+   install_recommends: no
+   cache_valid_time: 3600
+   state: latest
+  with_items:
+   - "postfix"
+   - "mailutils"
+

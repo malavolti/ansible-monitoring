@@ -1,0 +1,16 @@
+---
+# tasks file for postfix
+
+- name: "Postfix Install"
+  import_tasks: install.yml
+  tags: install,postfix_install
+  when:
+   - postfix['state'] is defined
+   - postfix['state'] in ["present"]
+
+- name: "Postfix Cleanup"
+  import_tasks: clean.yml
+  tags: clean,postfix_clean 
+  when:
+   - postfix['state'] is defined
+   - postfix['state'] in ["absent"]
