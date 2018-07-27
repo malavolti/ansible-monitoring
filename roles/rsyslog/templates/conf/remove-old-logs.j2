@@ -1,0 +1,5 @@
+#!/bin/bash
+
+find /data/var/log -type f -ctime +180 -exec rm {} \;
+
+find /data/var/log -type d -ctime +180 -exec rmdir {} \;

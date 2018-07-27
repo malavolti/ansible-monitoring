@@ -27,3 +27,14 @@
    - common is defined
    - common['volumes'][0]['volume_path'] is defined
    - common['volumes'][0]['volume_path'] != ""
+
+- name: "Be sure to manage logs' backups"
+  template:
+   src: "{{ item.src }}"
+   dest: "{{ item.dest }}"
+   owner: "root"
+   group: "root"
+   mode: 0755
+  with_items:
+   - { src: "conf/gzip-remote-logs.j2" , dest: "/etc/cron.daily/gzip-remote-logs"}
+   - { src: "conf/remove-old-logs.j2" , dest: "/etc/cron.monthly/remove-old-logs"}
