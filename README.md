@@ -1,13 +1,17 @@
 # ansible-monitoring
-Ansible Playbook to manage some monitoring tools
+
+Ansible Playbook to manage some monitoring tools:
+   * [Kibana](https://www.elastic.co/products/kibana)
+   * [Elasticsearch](https://www.elastic.co/products/elasticsearch)
+   * [Rsyslog](https://www.rsyslog.com/)
+   * [Rsnapshot](http://rsnapshot.org/)
+   * [Check_MK](http://mathias-kettner.com/index.html)
 
 ## Requirements
 
 * [Ansible](https://www.ansible.com/) - Tested with Ansible v2.4.0.0
 
-## Howto Configure 
-
-## Simple flow to Configure Kibana and Elasticsearch servers
+## HOWTO configure the monitoring servers with this ansible playbook
 
 **NOTE**: In our production environment, we provide elasticsearch/rsyslog servers with a persistent storage device to store all we need.
 
