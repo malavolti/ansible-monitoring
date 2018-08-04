@@ -4,4 +4,4 @@
 - import_playbook: kibana-servers.yml
 - import_playbook: checkmk-servers.yml
 - import_playbook: rsyslog-servers.yml
-- import_playbook: rsync-servers.yml
+- import_playbook: rsnapshot-servers.yml

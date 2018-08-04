@@ -111,9 +111,11 @@
    - common['ssl'] in ["True","true","Yes","yes"]
   tags: common
 
-- name: "Be sure to configure external backup if needed"
-  import_tasks: "ext-backup.yml"
-  when:
-    - common is defined
-    - common['ext-backup'] is defined
-  tags: common 
+- name: "Manage SWAP file if needed"
+  import_tasks: "manage_swapfile.yml"
+  when: 
+   - common['swap'] is defined
+   - common['swap']['name_swapfile'] is defined and common['swap']['name_swapfile'] != ''
+   - common['swap']['size_swapfile'] is defined and common['swap']['size_swapfile'] != ''
+   - common['swap']['state'] is defined and (common['swap']['state'] == 'present' or common['swap']['state'] == 'absent')
+  tags: common

@@ -17,7 +17,7 @@
    group: "{{ checkmk['config']['site_name'] }}"
    mode: "0644"
 
-- name: "Add Useris to Check_MK 'auth.serials'"
+- name: "Add Users to Check_MK 'auth.serials'"
   template:
    src: "conf/auth.serials.j2"
    dest: "/opt/omd/sites/{{ checkmk['config']['site_name'] }}/etc/auth.serials"

@@ -1,0 +1,31 @@
+---
+# tasks for add_swap_file.yml
+
+- name: "Write swapfile"
+  command: "dd if=/dev/zero of=/{{ common['swap']['name_swapfile'] }} bs=1M count={{ common['swap']['size_swapfile'] }}"
+  register: write_swapfile
+  when:
+   - swapfile.stat.exists == false
+
+- name: "Set swapfile permissions"
+  file: 
+   path: "/{{ common['swap']['name_swapfile'] }}" 
+   mode: 0600
+  when:
+   - swapfile.stat.exists == false
+
+- name: "Create swapfile"
+  command: "mkswap /{{ common['swap']['name_swapfile'] }}"
+  register: create_swapfile
+  when:
+   - swapfile.stat.exists == false or write_swapfile.changed 
+
+- name: "Add swap line on /etc/fstab"
+  lineinfile:
+   path: /etc/fstab
+   line: "/{{ common['swap']['name_swapfile'] }}  none  swap  sw 0 0"
+
+- name: "Enable swapfile"
+  command: "swapon /{{ common['swap']['name_swapfile'] }}"
+  when: 
+   - swapfile.stat.exists == false or create_swapfile.changed

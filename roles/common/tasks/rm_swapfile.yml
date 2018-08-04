@@ -1,0 +1,22 @@
+---
+# tasks for rm_swapfile.yml
+
+- name: "Disable swapfile"
+  command: "swapoff /{{ common['swap']['name_swapfile'] }}"
+  when:
+   - swapfile.stat.exists
+
+- name: "Remove swap line on /etc/fstab"
+  lineinfile:
+   path: "/etc/fstab"
+   line: "/{{ common['swap']['name_swapfile'] }}  none  swap  sw 0 0"
+   state: absent
+  when:
+   - swapfile.stat.exists
+
+- name: "Remove swapfile"
+  file:
+   path: "/{{ common['swap']['name_swapfile'] }}"
+   state: absent
+  when: 
+   - swapfile.stat.exists

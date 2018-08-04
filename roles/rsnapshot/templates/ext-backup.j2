@@ -1,0 +1,3 @@
+# Synchronize a local archive with an external backup server
+
+#{{ rsnapshot['ext-backup']['bck_cron_time'] }} root rsync -a -e "ssh -i /root/.ssh/{{ rsnapshot['ext-backup']['ssh_priv_key'] }}" {{ rsnapshot['ext-backup']['local_dir'] }} {{ rsnapshot['ext-backup']['user'] }}@{{ rsnapshot['ext-backup']['host'] }}:{{ rsnapshot['ext-backup']['dest_dir'] }}

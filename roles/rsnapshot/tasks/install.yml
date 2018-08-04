@@ -1,0 +1,8 @@
+---
+# tasks for install
+- name: "Be sure that packages needed are installed"
+  apt:
+   name: "rsnapshot"
+   state: latest
+   update_cache: yes
+   cache_valid_time: 3600

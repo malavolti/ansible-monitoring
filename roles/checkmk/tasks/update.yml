@@ -1,35 +1,54 @@
 ---
+- name: "Retrieve Check_MK updated patched version from the file loaded"
+  set_fact:
+   upd_patched_version: "{{ check_mk_deb['stdout'] | regex_search('[\\d]+\\.[\\d]+\\.[\\d]+p[\\d]+') }}"
+
 - name: "Retrieve Check_MK updated version from the file loaded"
   set_fact:
-   upd_version: "{{ check_mk_deb['stdout'] | regex_replace('^.*([\\d+].[\\d+].[\\d+]p\\d+).*?$', '\\1') }}"
+   upd_version: "{{ check_mk_deb['stdout'] | regex_search('[\\d]+\\.[\\d]+\\.[\\d]+') }}"
 
 - name: "Retrieve OMD version"
   command: "omd version {{ checkmk['config']['site_name'] }}"
   changed_when: false
   register: omd_version
 
+- name: "Retrieve the OMD current patched version"
+  set_fact:
+   omd_current_patched_version: "{{ omd_version['stdout'] | regex_search('[\\d]+\\.[\\d]+\\.[\\d]+p[\\d]+') }}"
+
 - name: "Retrieve the OMD current version"
   set_fact:
-   omd_current_version: "{{ omd_version | regex_replace('^.*([\\d+].[\\d+].[\\d+]p\\d+).*?$', '\\1') }}"
+   omd_current_version: "{{ omd_version['stdout'] | regex_search('[\\d]+\\.[\\d]+\\.[\\d]+') }}"
+
+#- debug:
+#   msg: "check_mk_deb['stdout']: {{ check_mk_deb['stdout'] }}"
+
+#- debug:
+#   msg: "upd_patched_version: {{ upd_patched_version }}"
 
 #- debug:
 #   msg: "upd_version: {{ upd_version }}"
 
 #- debug:
-#   msg: "omd_version: {{ omd_version }}"
+#   msg: "omd_version: {{ omd_version['stdout'] }}"
+
+#- debug:
+#   msg: "omd_current_patched_version: {{ omd_current_patched_version }}"
 
 #- debug:
 #   msg: "omd_current_version: {{ omd_current_version }}"
 
 - name: "Update Check MK version to {{ upd_version }}"
   command: "{{ item }}"
+  args:
+   chdir: /usr/local/src
   with_items:
    - "gdebi {{ check_mk_deb['stdout'] }} -n"
    - "omd stop {{ checkmk['config']['site_name'] }}"
    - "omd -f update --conflict=install {{ checkmk['config']['site_name'] }} {{ upd_version }}"
    - "omd start {{ checkmk['config']['site_name'] }}"
   when:
-   - omd_current_version != upd_version
+   - (omd_current_patched_version != upd_patched_version) or (omd_current_version != upd_version)
 
 - name: "Retrive Check_MK DEB name to uninstall"
   shell: "ls | head -1"
@@ -38,9 +57,9 @@
   changed_when: false
   register: uninstall_deb
   when:
-   - omd_current_version != upd_version
+   - (omd_current_patched_version != upd_patched_version) or (omd_current_version != upd_version)
 
 - name: "Uninstall the previous version"
   command: "dpkg --purge {{ uninstall_deb }}"
   when:
-   - omd_current_version != upd_version
+   - (omd_current_patched_version != upd_patched_version) or (omd_current_version != upd_version)

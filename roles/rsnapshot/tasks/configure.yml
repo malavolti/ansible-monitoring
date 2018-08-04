@@ -1,0 +1,58 @@
+---
+# tasks for configure
+
+- name: "Be sure to have created needed directory on the existent volume"
+  file:
+   path: "{{ item }}"
+   state: directory
+   mode: 0755
+  with_items:
+   - "{{ common['volumes'][0]['volume_path'] }}/backups"
+   - "{{ common['volumes'][0]['volume_path'] }}/backups/hourly.0"
+  when:
+   - common is defined
+   - common['volumes'][0]['volume_path'] is defined
+   - common['volumes'][0]['volume_path'] != ""
+
+- name: "Be sure to add the idpcloud-key to root authorized keys"
+  authorized_key:
+   user: root
+   state: present
+   key: "{{ rsnapshot['idpcloud']['ssh_pub_key'] }}"
+  when:
+   - rsnapshot is defined
+   - rsnapshot['idpcloud'] is defined
+   - rsnapshot['idpcloud']['ssh_pub_key'] is defined
+   - rsnapshot['idpcloud']['ssh_pub_key'] != ""
+
+- name: "Be sure that the private ssh key used by rsnapshot to retrieve backups is in /root/.ssh/"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/{{ rsnapshot['ssh_priv_key'] }}"
+   dest: "/root/.ssh/id_rsa"
+   owner: root
+   group: root
+   mode: 0600
+  when:
+   - rsnapshot is defined
+   - rsnapshot['ssh_priv_key'] is defined
+   - rsnapshot['ssh_priv_key'] != ""
+   
+- name: "Be sure that the public ssh key used by rsnapshot to retrieve backups is in /root/.ssh/"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/{{ rsnapshot['ssh_pub_key'] }}"
+   dest: "/root/.ssh/id_rsa.pub"
+   owner: root
+   group: root
+   mode: 0644
+  when:
+   - rsnapshot is defined
+   - rsnapshot['ssh_pub_key'] is defined
+   - rsnapshot['ssh_pub_key'] != ""
+
+- name: "Configure Rsnapshot"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/rsnapshot.conf"
+   dest: /etc/rsnapshot.conf
+   owner: "root"
+   group: "root"
+   mode: "0644"

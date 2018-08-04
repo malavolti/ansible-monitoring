@@ -1,0 +1,21 @@
+---
+# tasks file for rsnapshot
+
+#- name: "Include OS-specific variables."
+#  include_vars: "{{ ansible_os_family }}.yml"
+#  tags: rsnapshot
+
+- name: "Install Rsnapshot"
+  import_tasks: "install.yml"
+  tags: rsnapshot
+
+- name: "Configure Rsnapshot"
+  import_tasks: "configure.yml"
+  tags: rsnapshot
+
+- name: "Configure external backup if needed"
+  import_tasks: "ext-backup.yml"
+  when:
+    - rsnapshot is defined
+    - rsnapshot['ext-backup'] is defined
+  tags: rsnapshot

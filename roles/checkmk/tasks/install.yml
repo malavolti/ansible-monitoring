@@ -20,7 +20,7 @@
 
 - name: "Be sure to load Check MK package to install"
   copy:
-   src: "files/deb/"
+   src: "{{ files_dir }}/{{ fqdn }}/deb/"
    dest: "/usr/local/src/"
    owner: "root"
    group: "root"
@@ -34,9 +34,7 @@
     chdir: /usr/local/src
   changed_when: false
   register: check_mk_deb
-
-#- debug:
-#   msg: "check_mk_deb: {{ check_mk_deb ['stdout'] }}"
+  tags: checkmk_upd
 
 - name: "Be sure to install '{{ check_mk_deb['stdout'] }}'"
   command: "gdebi {{ check_mk_deb['stdout'] }} -n"

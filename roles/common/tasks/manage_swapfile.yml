@@ -1,0 +1,17 @@
+---
+# tasks for manage_swapfile
+
+- name: "Retrieve stats of /{{ common['swap']['name_swapfile'] }}"
+  stat:
+   path: "/{{ common['swap']['name_swapfile'] }}"
+  register: swapfile
+
+- name: "Add SWAP file"
+  import_tasks: add_swapfile.yml
+  when:
+   - common['swap']['state'] is defined and common['swap']['state'] == "present"
+
+- name: "Remove SWAP file"
+  import_tasks: rm_swapfile.yml
+  when:
+   - common['swap']['state'] is defined and common['swap']['state'] == "absent"

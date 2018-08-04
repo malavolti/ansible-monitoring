@@ -1,13 +1,11 @@
 # ansible-monitoring
 Ansible Playbook to manage some monitoring tools
 
-
 ## Requirements
 
-* [Ansible](https://www.ansible.com/) - Tested with Ansible v2.3.1.0
+* [Ansible](https://www.ansible.com/) - Tested with Ansible v2.4.0.0
 
 ## Howto Configure 
-
 
 ## Simple flow to Configure Kibana and Elasticsearch servers
 
@@ -19,62 +17,37 @@ Ansible Playbook to manage some monitoring tools
 2. Retrieve GIT repository of the project:
    * ```apt-get install git```
    * ```cd /opt ; git clone https://github.com/malavolti/ansible-monitoring.git```
+   * ```cd /opt/ansible-monitoring ; git clone https://github.com/malavolti/ansible-monitoring-inventories inventories```
 
 3. Create your ```.vault_pass.txt``` that contains the encryption password (this is needed ONLY when you use Ansible Vault):
    * ```cd /opt/ansible-monitoring```
    * ```openssl rand -base64 64 > .vault_pass.txt```
 
-4. Create the right inventory file/files about your servers by following the template provided:
+4. Create the right inventory file/files about your servers by following the templates provided:
    * ```inventories/development/development.ini``` for your development servers.
    * ```inventories/production/production.ini``` for your production servers.
    * ```inventories/test/test.ini``` for your test servers.
 
-5. Create the monitoring configuration file by copying/filling the templates:
-   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-checkmk-template```
-   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-elasticsearch-template```
-   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-kibana-template```
-   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-data-backups-template```
-   * ```/opt/ansible-monitoring/inventories/#_environment_#/host_vars/FQDN.yml-rsyslog-template```
+5. Create the monitoring configuration file/files by following the templates provided(example for 'production' environment):
+   * ```/opt/ansible-monitoring/inventories/production/host_vars/checkmk.example.org.yml```
+   * ```/opt/ansible-monitoring/inventories/production/host_vars/elasticsearch1.example.org.yml```
+   * ```/opt/ansible-monitoring/inventories/production/host_vars/kibana.example.org.yml```
+   * ```/opt/ansible-monitoring/inventories/production/host_vars/data-backups.example.org.yml```
+   * ```/opt/ansible-monitoring/inventories/production/host_vars/logs.example.org.yml```
 
-   into proper ```/opt/ansible-monitoring/#_environment_#/host_vars/FQDN.yml``` file.
-   This file will provide to Ansible all variables needed to instance each server.
+   These files will provide to Ansible all variables needed to instance each server.
 
-6. Insert SSL Certificate and SSL Certificate Key of Kibana and CheckMK ```/opt/ansible-monitoring/roles/common/files``` directory.
+6. Check the "```inventories/files```" directory to understand what files each server needs directory and provide them.
 
-7. Encrypt the monitoring configuration files with Ansible Vault (Optional: this is needed ONLY when you need Ansible Vault):
+7. Encrypt the monitoring configuration files with Ansible Vault (Optional: this is needed ONLY when you need Ansible Vault).
+   Example for 'production' environment:
    * ```cd /opt/ansible-monitoring```
-   * ```ansible-vault encrypt inventories/#_environment_#/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
+   * ```ansible-vault encrypt inventories/production/host_vars/FQDN.yml --vault-password-file .vault_pass.txt```
 
-8. Execute this command to run Ansible on develoment inventory and to instance new virtual machine:
-   * ```ansible-playbook site.yml -i inventories/development/development.ini --vault-password-file .vault_pass.txt```
-
+8. Execute this command to run Ansible on production inventory and configure your servers:
+   * ```ansible-playbook site.yml -i inventories/production/development.ini --vault-password-file .vault_pass.txt```
 
 ## Useful Commands
-
-```
---- development.ini ---
-# Put here IP or FQDN of your Elasticsearch Servers
-[Debian-Elasticsearch]
-elasticsearch1.example.org
-elasticsearch2.example.org
-
-# Put here IP or FQDN of your Kibana Servers
-[Debian-Kibana]
-kibana.example.org
-
-# Put here IP or FQDN of your Check MK Servers
-[Debian-Checkmk]
-ckheckmk.example.org
-
-# Put here IP or FQDN of your Rsyslog Servers
-[Debian-Rsyslog]
-logs.example.org
-
-# Put here IP or FQDN of your Data Backups Servers
-[Debian-Rsync]
-data-backups.example.org
------------------------
-```
 
 1. Test that the connection with the server(s) is working:
    * ```ansible all -m ping -i /opt/ansible-monitoring/inventories/#_environment_#/#_environment_#.ini -u debian```
