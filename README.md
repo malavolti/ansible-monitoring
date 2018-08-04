@@ -1,6 +1,6 @@
 # ansible-monitoring
 
-Ansible Playbook to manage some monitoring tools:
+Ansible Playbook to manage some monitoring tools (tested on Debian 9 "Stretch" servers):
    * [Kibana](https://www.elastic.co/products/kibana)
    * [Elasticsearch](https://www.elastic.co/products/elasticsearch)
    * [Rsyslog](https://www.rsyslog.com/)
