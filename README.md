@@ -37,7 +37,7 @@ Ansible Playbook to manage some monitoring tools
 
    These files will provide to Ansible all variables needed to instance each server.
 
-6. Check the "```inventories/files```" directory to understand what files each server needs directory and provide them.
+6. Check the "```inventories/files```" directory to understand what files each server needs and provide them.
 
 7. Encrypt the monitoring configuration files with Ansible Vault (Optional: this is needed ONLY when you need Ansible Vault).
    Example for 'production' environment:
@@ -78,4 +78,3 @@ Ansible Playbook to manage some monitoring tools
 #### Original Author and Development Lead
 
 * Marco Malavolti (marco.malavolti@gmail.com)
-
