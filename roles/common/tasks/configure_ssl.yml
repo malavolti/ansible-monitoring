@@ -8,8 +8,8 @@
    group: "{{ item.group }}"
    mode: "{{ item.mode }}"
   with_items:
-   - { src: "{{ files_dir }}/{{ fqdn }}/{{ common['ssl_cert'] }}", dest: "/etc/ssl/certs/ssl-cert.crt", owner: "root" , group: "ssl-cert" , mode: "0644"  }
-   - { src: "{{ files_dir }}/{{ fqdn }}/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
+   - { src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ssl_cert'] }}", dest: "/etc/ssl/certs/ssl-cert.crt", owner: "root" , group: "ssl-cert" , mode: "0644"  }
+   - { src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
 
 - name: "Ensure local certs directory exists"
   file:
@@ -23,7 +23,7 @@
 
 - name: "Install CA Certificate"
   copy:
-   src: "{{ files_dir }}/{{ fqdn }}/{{ common['ca'] }}"
+   src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ca'] }}"
    dest: "/usr/local/share/ca-certificates/cacert.crt"
    owner: "root"
    group: "root"
