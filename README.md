@@ -20,8 +20,8 @@ Ansible Playbook to manage some monitoring tools (tested on Debian 9 "Stretch" s
 
 2. Retrieve GIT repository of the project:
    * ```apt-get install git```
-   * ```cd /opt ; git clone https://github.com/malavolti/ansible-monitoring.git```
-   * ```cd /opt/ansible-monitoring ; git clone https://github.com/malavolti/ansible-monitoring-inventories inventories```
+   * ```cd /opt ; git clone https://github.com/[malavolti|ConsortiumGARR|GEANT]/ansible-monitoring.git```
+   * ```cd /opt/ansible-monitoring ; git clone https://github.com/[malavolti|ConsortiumGARR|GEANT]/ansible-monitoring-inventories inventories```
 
 3. Create your ```.vault_pass.txt``` that contains the encryption password (this is needed ONLY when you use Ansible Vault):
    * ```cd /opt/ansible-monitoring```
