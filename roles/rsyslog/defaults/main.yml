@@ -1,4 +1,4 @@
 ---
 # defaults file for rsyslog
 
-elastic_1_ip_priv: "192.168.80.4"
+elastic_1_ip_priv: "192.168.80.253"
