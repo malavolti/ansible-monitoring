@@ -1,0 +1,36 @@
+---
+# Install Amazon Corretto JDK on Debian
+
+- name: "Add Amazon Corretto JDK signing key to APT"
+  apt_key:
+    url: "https://apt.corretto.aws/corretto.key"
+    state: present
+
+- name: "Add Amazon Corretto JDK APT repository"
+  apt_repository:
+    repo: "deb https://apt.corretto.aws stable main"
+    state: present
+
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: "Install Amazon Corretto JDK"
+  apt:
+   name: ['software-properties-common', "java-{{ jdk_version }}-amazon-corretto-jdk"]
+   state: latest
+   install_recommends: no
+
+- name: "Correct java version selected"
+  alternatives:
+    name: "java"
+    path: "/usr/lib/jvm/java-{{ jdk_version }}-amazon-corretto/bin/java"
+
+- name: "Create the 'default-java' link"
+  file:
+   src: "/usr/lib/jvm/java-{{ jdk_version }}-amazon-corretto"
+   dest: "/usr/lib/jvm/default-java"
+   state: link
+
+

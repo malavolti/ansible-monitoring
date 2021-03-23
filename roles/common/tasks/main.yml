@@ -1,7 +1,151 @@
 ---
 # tasks file for common
-- name: "Include OS-specific variables if custom ones are not already defined by host_vars"
-  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+  tags: common
+
+- name: "Configure the 'hosts' file with the FQDN provided"
+  template:
+   src: hosts.j2
+   dest: /etc/hosts
+   owner: "root"
+   group: "root"
+   mode: "0644" 
+  tags: common
+
+- name: "Configure the 'hostname' with the FQDN provided"
+  hostname:
+   name: "{{ fqdn }}"
+  tags: common
+
+- name: "Configure the nameservers in the resolver"
+  template:
+   src: resolv.conf.j2
+   dest: /etc/resolv.conf
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  tags: common
+
+- name: "Add root user's password"
+  user:
+   name: "root"
+   password: "{{ common['root_user_pw'] | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}"
+  tags: common
+
+- name: "Disable Root SSH Login access"
+  lineinfile:
+   dest: "/etc/ssh/sshd_config"
+   regexp: "^PermitRootLogin"
+   insertafter: "^#PermitRootLogin prohibit-password"
+   line: "PermitRootLogin no"
+   state: present
+  notify: 
+   - "Restart SSH"
+  tags: common
+
+- name: "Check the existance of cloud-init configuration"
+  stat:
+    path: /etc/cloud/cloud.cfg
+  register: cloud_cfg
+  tags: common
+
+- name: "Comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
+  lineinfile:
+   dest: /etc/cloud/cloud.cfg
+   regexp: "manage_etc_hosts"
+   line: "#manage_etc_hosts"
+   state: present
+  when:
+   - cloud_cfg.stat.exists
+  tags: common
+
+- name: "Install needed common packages"
+  apt: 
+   name: ['ntp', 'ntpdate', 'vim', 'ca-certificates', 'openssl', 'ssl-cert', 'aptitude', 'debconf', 'debconf-utils', 'apt-transport-https', 'patch', 'fail2ban']
+   install_recommends: no
+   state: latest
+  tags: common
+
+- name: "Replace default mirror site with the preferred one"
+  replace:
+   dest: /etc/apt/sources.list
+   regexp: "http[:][/][/]deb.debian.org[/]debian[/]"
+   replace: "{{ common['mirror'] }}"
+  register: sources_list
+  when:
+   - common is defined
+   - common['mirror'] is defined and common['mirror'] != ''
+  tags: common 
+
+- name: "Run 'apt-get update' after a sources.list change"
+  apt:
+   update_cache: yes
+  when:  
+   - sources_list.changed
+  tags: common
+
+- name: "Configure NTP service"
+  template: 
+   src: ntp.conf.j2
+   dest: /etc/ntp.conf
+  notify:
+    - "Restart ntp"
+  tags: common
+
+- name: "Start NTP service"
+  systemd:
+    name: ntp
+    daemon_reload: True
+    state: started
+    enabled: True
+  tags: common
+
+- name: "Set timezone variable"
+  template:
+   src: timezone.j2
+   dest: /etc/timezone
+   owner: "root"
+   group: "root"
+   mode: "0644"
+   backup: "yes"
+  notify:
+   - "Update Timezone"
+  tags: common
+
+- name: "Set /etc/localtime in Debian Stretch"
+  file:
+   src: "/usr/share/zoneinfo/{{ my_timezone }}"
+   dest: "/etc/localtime"
+   state: link
+  when: ansible_distribution_release != "jessie"
+  tags: common
+
+- name: "Be sure to configure SSL if needed"
+  import_tasks: "configure_ssl.yml"
+  when: 
+   - common is defined
+   - common['ssl'] is defined
+   - common['ssl'] in ["True","true","Yes","yes"]
+  tags: common
+
+- name: "Manage SWAP file if needed"
+  import_tasks: "manage_swapfile.yml"
+  when: 
+   - common['swap'] is defined
+   - common['swap']['name_swapfile'] is defined and common['swap']['name_swapfile'] != ''
+   - common['swap']['size_swapfile'] is defined and common['swap']['size_swapfile'] != ''
+   - common['swap']['state'] is defined and (common['swap']['state'] == 'present' or common['swap']['state'] == 'absent')
+  tags: common
+
+- name: "Assign the right privileges to the /tmp directory"
+  file:
+   path: "/tmp"
+   state: directory
+   mode: "u+rwx,g+rwx,o+rwt"
   tags: common
 
 - name: "Be sure to format correctly the volume, if exists"
@@ -34,88 +178,4 @@
    - item['volume_path'] is defined
    - item['volume_path'] != ""
   with_items: "{{ common['volumes'] }}"
-  tags: common
-
-- name: "Be sure that the FQDN is configured"
-  template:
-   src: hosts.j2
-   dest: /etc/hosts
-   owner: "root"
-   group: "root"
-   mode: "0644" 
-  tags: common
-
-- name: "Be sure to comment out 'manage_etc_host' from /etc/cloud/cloud.cfg"
-  lineinfile:
-   dest: /etc/cloud/cloud.cfg
-   regexp: "manage_etc_hosts"
-   line: "#manage_etc_hosts"
-   state: present
-  tags: common
-
-- name: "Be sure that needed packages are installed"
-  apt: 
-   name: "{{item}}"
-   update_cache: yes
-   state: latest
-  with_items:
-   - ntp
-   - ntpdate
-   - vim
-   - ca-certificates
-   - openssl
-   - ssl-cert
-   - aptitude
-   - apt-transport-https
-  tags: common
-
-- name: "Be sure to use the preferred mirror for packages"
-  replace:
-   dest: /etc/apt/sources.list
-   regexp: "http[:][/][/]http.debian.net[/]debian"
-   replace: "{{ mirror }}"
-  tags: common 
-
-- name: "Be sure ntp is configured"
-  template: 
-   src: ntp.conf.j2
-   dest: /etc/ntp.conf
-  notify:
-    - "Restart ntp"
-  tags: common
-
-- name: "Be sure ntpd is running and enabled"
-  service: 
-   name: ntp
-   state: started
-   enabled: yes
-  tags: common
-
-- name: "Set timezone variable"
-  template:
-   src: timezone.j2
-   dest: /etc/timezone
-   owner: "root"
-   group: "root"
-   mode: "0644"
-   backup: "yes"
-  notify:
-   - "Update Timezone"
-  tags: common
-
-- name: "Be sure to configure SSL if needed"
-  import_tasks: "configure_ssl.yml"
-  when: 
-   - common is defined
-   - common['ssl'] is defined
-   - common['ssl'] in ["True","true","Yes","yes"]
-  tags: common
-
-- name: "Manage SWAP file if needed"
-  import_tasks: "manage_swapfile.yml"
-  when: 
-   - common['swap'] is defined
-   - common['swap']['name_swapfile'] is defined and common['swap']['name_swapfile'] != ''
-   - common['swap']['size_swapfile'] is defined and common['swap']['size_swapfile'] != ''
-   - common['swap']['state'] is defined and (common['swap']['state'] == 'present' or common['swap']['state'] == 'absent')
   tags: common

@@ -1,11 +1,11 @@
 ---
 # tasks file for apache
-- name: "Be sure that apache2 user is added to ssl-cert group"
+- name: "Add Apache user 'www-data' to 'ssl-cert' group"
   user:
-   name: "apache2"
+   name: "www-data"
    groups: "ssl-cert"
 
-- name: "Be sure to have SSL, include, negotiation, headers and Proxy modules enabled"
+- name: "Be sure to have Apache modules alias, SSL, include, negotiation, headers and Proxy enabled"
   apache2_module:
    name: "{{ item }}"
    state: present
@@ -19,32 +19,89 @@
   notify:
    - "Restart Apache"
 
-- name: "Be sure to have Apache SSL site configured correctly"
+- name: "Check if Apache HTTP VirtualHost is already enabled"
+  stat:
+   path: "/etc/apache2/sites-enabled/{{ fqdn }}.conf"
+  register: http_site_apache
+  changed_when: false
+
+- name: "Enable redirection to HTTPS from all HTTP URL"
+  template:
+   src: "default.conf.j2"
+   dest: "/etc/apache2/sites-available/{{ fqdn }}.conf"
+   owner: "root"
+   group: "root"
+   mode: "0644"
+  when:
+   - http_site_apache.stat.exists == False
+  notify:
+   - "Restart Apache"
+
+- name: "Enable Apache HTTP VirtualHost"
+  shell: "a2ensite -q {{ fqdn }}"
+  when: 
+   - http_site_apache.stat.exists == False
+  notify:
+   - "Restart Apache"
+
+- name: "Check if Apache HTTPS VirtualHost is already enabled"
+  stat:
+   path: "/etc/apache2/sites-enabled/{{ fqdn }}-ssl.conf"
+  register: ssl_site_apache
+  changed_when: false
+
+- name: "Add Apache HTTPS VirtualHost"
   template:
    src: default-ssl.conf.j2
-   dest: /etc/apache2/sites-enabled/default-ssl.conf
+   dest: /etc/apache2/sites-available/{{ fqdn }}-ssl.conf
    owner: "root"
    group: "root"
    mode: "0644"
+  when: ssl_site_apache.stat.exists == False
   notify:
    - "Restart Apache"
 
-- name: "Be sure to have Apache HTTP site has the redirection to HTTPS"
-  template:
-   src: default.conf.j2
-   dest: /etc/apache2/sites-enabled/000-default.conf
-   owner: "root"
-   group: "root"
-   mode: "0644"
+- name: "Enable Apache HTTPS VirtualHost"
+  shell: "a2ensite -q {{ fqdn }}-ssl"
+  when: ssl_site_apache.stat.exists == False
   notify:
    - "Restart Apache"
 
-- name: "Be sure to have enabled Apache localized error pages"
+- name: "Check if Apache localized error pages conf is alread enabled"
+  stat:
+   path: "/etc/apache2/conf-enabled/localized-error-pages.conf"
+  register: apache_local_error_pages
+  changed_when: false
+
+- name: "Load localized Apache error pages"
   copy:
    src: files/localized-error-pages.conf
-   dest: /etc/apache2/conf-enabled/localized-error-pages.conf
+   dest: /etc/apache2/conf-available/localized-error-pages.conf
    owner: "root"
    group: "root"
    mode: "0644"
+  when: apache_local_error_pages.stat.exists == False
   notify:
    - "Restart Apache"
+
+- name: "Enable Apache Localized error pages"
+  shell: "a2enconf -q localized-error-pages"
+  when: apache_local_error_pages.stat.exists == False
+  notify:
+   - "Restart Apache"
+
+- name: "Remove any conf file into '/etc/apache2/conf-enabled'"
+  file:
+   path: "/etc/apache2/conf-enabled/localized-error-pages.conf"
+   state: absent
+  when: apache_local_error_pages.stat.isreg is defined and apache_local_error_pages.stat.isreg
+  notify:
+   - "Restart Apache"
+
+- name: "Restart Apache if CA, CRT or KEY are changed"
+  systemd:
+   state: restarted
+   name: apache2
+   daemon_reload: True
+  when: 
+   - ssl_cert['changed'] == True or ssl_key['changed'] == True or ssl_ca['changed'] == True

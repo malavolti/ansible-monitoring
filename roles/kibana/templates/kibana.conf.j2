@@ -1,0 +1,7 @@
+<IfModule mod_proxy.c>
+   ProxyPreserveHost On
+   RequestHeader set X-Forwarded-Proto "https"
+   ProxyPass         / http://localhost:5601/ retry=5
+   ProxyPassReverse  / http://localhost:5601/ retry=5
+   RedirectMatch ^/$ https://{{ fqdn }}/
+</IfModule>

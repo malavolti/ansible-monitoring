@@ -30,7 +30,11 @@ node.name: {{ elasticsearch['config']['node_name'] }}
 #
 # Path to directory where to store the data (separate multiple locations by comma):
 #
+{% if common['volumes'][0]['volume_path'] is defined  %}
+path.data: {{ common['volumes'][0]['volume_path'] }}/elasticsearch-data
+{% else %}
 #path.data: /path/to/data
+{% endif %}
 #
 # Path to log files:
 #
@@ -69,16 +73,17 @@ network.host: {{ fqdn }}
 # Pass an initial list of hosts to perform discovery when new node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
-discovery.zen.ping.unicast.hosts:
+discovery.seed_hosts:
 {% for host in elasticsearch['config']['discovery_hosts'] %}
    - {{ host }}
 {% endfor %}
- 
-# Prevent the "split brain" by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
-#
-discovery.zen.minimum_master_nodes: {{ elasticsearch['config']['min_master_nodes'] }}
 
-# For more information, consult the zen discovery module documentation.
+# Bootstrap the cluster using an initial set of master-eligible nodes:
+#
+cluster.initial_master_nodes:
+   - {{ elasticsearch['config']['discovery_hosts'][0] }}
+
+# For more information, consult the discovery and cluster formation module documentation.
 #
 # ---------------------------------- Gateway -----------------------------------
 #

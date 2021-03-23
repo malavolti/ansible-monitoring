@@ -1,7 +1,9 @@
 ---
 # tasks file for jdk
-- name: "Include OS-specific variables."
-  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: "Install Amazon Corretto JDK"
+  import_tasks: "install_corretto_Debian.yml"
+  when: jdk_type == "corretto" and ansible_os_family == 'Debian'
   tags: jdk
 
 - name: "Install OpenJDK"

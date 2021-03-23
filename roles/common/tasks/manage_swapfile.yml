@@ -4,6 +4,7 @@
 - name: "Retrieve stats of /{{ common['swap']['name_swapfile'] }}"
   stat:
    path: "/{{ common['swap']['name_swapfile'] }}"
+   get_md5: no
   register: swapfile
 
 - name: "Add SWAP file"

@@ -8,9 +8,9 @@
 
 - name: "Be sure to add Elasticsearch repository"
   apt_repository:
-    repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
+    repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
     state: present
-    filename: 'elastic-5.x'
+    filename: 'elastic-7.x'
 
 - name: "Be sure to install the elasticsearch package"
   apt:
@@ -18,11 +18,11 @@
    state: latest
    update_cache: yes
 
-- name: "Be sure to enable elasticsearch service and ensure it is not masked"
-  systemd:
-   name: "elasticsearch.service"
-   daemon_reload: yes
-   enabled: yes
-   state: started
-   masked: no
-  changed_when: false
+#- name: "Be sure to enable elasticsearch service and ensure it is not masked"
+#  systemd:
+#   name: "elasticsearch.service"
+#   daemon_reload: yes
+#   enabled: yes
+#   state: started
+#   masked: no
+#  changed_when: false

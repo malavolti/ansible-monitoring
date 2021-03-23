@@ -1,5 +1,8 @@
 ---
 # defaults file for apache
 
+# Machine Variables
+fqdn: idp.example.org
+
 apache:
    admin_email: "root@localhost"

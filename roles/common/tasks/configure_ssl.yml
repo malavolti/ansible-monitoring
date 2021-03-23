@@ -1,25 +1,28 @@
 ---
-# tasks for install-ssl
-- name: "Be sure that CA, SSL Certificate and SSL Key are inside the right '/etc/ssl' directories"
-  copy:
-   src: "{{ item.src }}"
-   dest: "{{ item.dest }}"
-   owner: "{{ item.owner }}"
-   group: "{{ item.group }}"
-   mode: "{{ item.mode }}"
-  with_items:
-   - { src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ssl_cert'] }}", dest: "/etc/ssl/certs/ssl-cert.crt", owner: "root" , group: "ssl-cert" , mode: "0644"  }
-   - { src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ssl_key'] }}", dest: "/etc/ssl/private/ssl-cert.key", owner: "root" , group: "ssl-cert" , mode: "0440"  }
+# tasks for configure_ssl
 
-- name: "Ensure local certs directory exists"
+- name: "Be sure that SSL Certificate is in '/etc/ssl/certs'"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ssl_cert'] }}"
+   dest: "/etc/ssl/certs/ssl-cert.crt"
+   owner: "root"
+   group: "ssl-cert"
+   mode: "0644"
+  register: ssl_cert
+
+- name: "Be sure that SSL Key is in '/etc/ssl/private'"
+  copy:
+   src: "{{ files_dir }}/{{ fqdn }}/common/ssl/{{ common['ssl_key'] }}"
+   dest: "/etc/ssl/private/ssl-cert.key"
+   owner: "root"
+   group: "ssl-cert"
+   mode: "0440"
+  register: ssl_key
+
+- name: "Be sure that 'ca-certificates' directory exists"
   file:
    state: "directory"
    path: "/usr/local/share/ca-certificates"
-
-- name: "Check if the CA is already installed"
-  stat:
-    path: "/etc/ssl/certs/cacert.pem"
-  register: cacert
 
 - name: "Install CA Certificate"
   copy:
@@ -28,8 +31,24 @@
    owner: "root"
    group: "root"
    mode: "0644"
-  when: cacert.stat.islnk is not defined
+  register: ssl_ca
 
 - name: "Update cert index"
   shell: "/usr/sbin/update-ca-certificates"
-  when: cacert.stat.islnk is not defined
+  when: ssl_ca['changed'] == true
+
+- name: "Check if Apache exists"
+  stat:
+   path: "/etc/init.d/apache2"
+  register: check_apache2
+
+- name: "Restart Apache"
+  become: yes
+  become_method: sudo
+  systemd:
+   name: apache2
+   daemon_reload: yes
+   state: restarted
+  when:
+   - check_apache2.stat.exists == True 
+   - ssl_ca['changed'] == True or ssl_key['changed'] == True or ssl_cert['changed'] == True

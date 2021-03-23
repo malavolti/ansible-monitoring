@@ -4,10 +4,15 @@
 #
 # OpenJDK: 
 #   jdk_type: "openjdk"
+#   jdk_version: "8"
 #
 # Oracle JDK: 
 #   jdk_type: "oraclejdk"
+#   jdk_version: "8"
+#
+# Amazon Corretto JDK: 
+#   jdk_type: "corretto"
+#   jdk_version: "11"
 
-jdk_type: "openjdk"
-
-mirror: "https://mi.mirror.garr.it/mirrors/debian/"
+jdk_type: "corretto"
+jdk_version: "11"

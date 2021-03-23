@@ -1,7 +1,12 @@
 ---
 # tasks file for apache
-- name: "Be sure that packages needed are installed"
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
+  apt:
+   update_cache: yes
+   cache_valid_time: 3600
+
+- name: "Install needed packages"
   apt:
    name: "{{ httpd_packages }}"
    state: latest
-   update_cache: yes
+   install_recommends: no

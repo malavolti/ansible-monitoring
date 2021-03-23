@@ -1,40 +1,34 @@
 ---
 # Install OpenJDK on Debian
 
-- name: "Be sure to install OpenJDK 8 backports APT repository"
+- name: "Debian 8 - Add OpenJDK 8 backports APT repository"
   apt_repository:
-    repo: "deb {{ mirror }} {{ ansible_distribution_release}}-backports main"
+    repo: "deb {{ common['mirror'] | default('http://deb.debian.org/debian/') }} jessie-backports main"
     state: present
-    update_cache: "yes"
-    filename: '{{ ansible_distribution_release }}-backports'
+    filename: 'jessie-backports'
   when: ansible_distribution_release == "jessie"
 
-- name: "Be sure to install OpenJDK 8 from backports"
+- name: "Run 'apt-get update' if the last one is more than 3600 seconds ago"
   apt:
-   name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: "Debian 8 - Install OpenJDK 8"
+  apt:
+   name: ['ca-certificates-java', 'openjdk-8-jre-headless', 'openjdk-8-jre', 'openjdk-8-jdk']
    state: latest
-   update_cache: "yes"
-   default_release: "{{ ansible_distribution_release }}-backports"
-  with_items:
-   - "ca-certificates-java"
-   - "openjdk-8-jre-headless"
-   - "openjdk-8-jre"
-   - "openjdk-8-jdk"
+   install_recommends: no
+   default_release: "jessie-backports"
   when: ansible_distribution_release == "jessie"
 
-- name: "Be sure to install OpenJDK 8"
+- name: "Install OpenJDK 8"
   apt:
-   name: "{{ item }}"
+   name: ['ca-certificates-java', 'openjdk-8-jre-headless', 'openjdk-8-jre', 'openjdk-8-jdk']
    state: latest
-   update_cache: "yes"
-  with_items:
-   - "ca-certificates-java"
-   - "openjdk-8-jre-headless"
-   - "openjdk-8-jre"
-   - "openjdk-8-jdk"
+   install_recommends: no
   when: ansible_distribution_release != "jessie"
 
-- name: "Be sure to set the default-java link"
+- name: "Configure default-java link"
   file:
    src: "/usr/lib/jvm/java-8-openjdk-amd64"
    dest: "/usr/lib/jvm/default-java"

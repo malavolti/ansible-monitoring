@@ -1,13 +1,16 @@
 ---
 # handlers file for common
 - name: "Restart ntp"
-  service: 
-   name: ntp 
+  systemd: 
+   name: ntp
+   daemon-reload: yes
+   state: restarted
+
+- name: "Restart SSH"
+  systemd:
+   name: ssh
+   daemon-reload: yes
    state: restarted
 
 - name: "Update Timezone"
-  shell: dpkg-reconfigure --frontend noninteractive tzdata
-
-- name: "Safe Upgrade"
-  apt:
-    upgrade: safe
+  shell: dpkg-reconfigure --frontend noninteractive tzdata  

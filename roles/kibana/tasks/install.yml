@@ -8,9 +8,9 @@
 
 - name: "Be sure to add elastic repository"
   apt_repository:
-    repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
+    repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
     state: present
-    filename: 'elastic-5.x'
+    filename: 'elastic-7.x'
 
 - name: "Be sure to install the kibana package"
   apt:
@@ -31,19 +31,3 @@
    - common['volumes'] is defined
    - common['volumes'][0]['volume_path'] is defined
    - common['volumes'][0]['volume_path'] != ""
-
-- name: "Be sure to configure correctly kibana"
-  template:
-   src: "conf/kibana.yml.j2"
-   dest: "/etc/kibana/kibana.yml"
-   owner: "root"
-   group: "root"
-   mode: "0644"
-
-- name: "Be sure to enable kibana service and ensure it is not masked"
-  systemd:
-   name: "kibana.service"
-   daemon_reload: yes
-   enabled: yes
-   state: started
-   masked: no
