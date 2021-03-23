@@ -1,6 +1,11 @@
 ---
 # tasks file for sys-update
+
 - name: "Be sure to upgrade all packages"
   apt:
-   upgrade: dist
+   upgrade: safe
    update_cache: yes
+   cache_valid_time: 3600
+
+#- name: "Reboot VM to upgrade Kernel"
+#  command: reboot

@@ -1,4 +1,6 @@
 ---
 # defaults file for rsyslog
 
-elastic_1_ip_priv: "192.168.80.253"
+elasticsearch_servers: 
+ - <ELASTICSEARCH-NODE-1-PRIVATE-IP>
+ - <ELASTICSEARCH-NODE-2-PRIVATE-IP>

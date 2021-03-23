@@ -1,10 +1,8 @@
 ---
 # tasks for install
-- name: "Be sure that packages needed are installed"
+
+- name: "Be sure that needed packages are installed"
   apt:
-   name: "{{ item }}"
+   name: ['rsyslog-relp', 'rsyslog-elasticsearch']
    state: latest
    update_cache: yes
-  with_items:
-   - "rsyslog-relp"
-   - "rsyslog-elasticsearch"

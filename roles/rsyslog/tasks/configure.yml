@@ -1,7 +1,7 @@
 ---
 # tasks for configure
 
-- name: "Be sure to have created needed directory on the existent volume"
+- name: "Be sure to have needed directories on the volume"
   file:
    path: "{{ item }}"
    state: directory
@@ -14,7 +14,7 @@
    - common['volumes'][0]['volume_path'] is defined
    - common['volumes'][0]['volume_path'] != ""
 
-- name: "Be sure to configure correctly the Rsyslog server"
+- name: "Be sure to configure correctly Rsyslog server"
   template:
    src: "conf/relp.conf.j2"
    dest: "/etc/rsyslog.d/22-relp.conf"
