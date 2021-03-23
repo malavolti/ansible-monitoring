@@ -1,4 +1,12 @@
 ---
 # defaults file for elasticsearch
 
+elasticsearch:
+ config:
+  cluster_name: "elasticsearch"
+  node_name: "{{ fqdn }}"
+  discovery_hosts:
+   - "<FQDN-ELASTICSEARCH-NODE-1>"
+   - "<FQDN-ELASTICSEARCH-NODE-2>"
+
 elastic-gpg-key: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"

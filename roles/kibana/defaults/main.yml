@@ -1,0 +1,9 @@
+---
+# defaults variables for kibana
+
+kibana:
+ config:
+  server_name: "kibana"
+  elasticsearch_hosts: 
+   - "http://<PRIVATE-IP-NODE-1-ELASTICSEARCH>:9200"
+   - "http://<PRIVATE-IP-NODE-2-ELASTICSEARCH>:9200"
