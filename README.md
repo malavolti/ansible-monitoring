@@ -9,7 +9,7 @@ Ansible Playbook to manage some monitoring tools (tested on Debian 9 "Stretch" s
 
 ## Requirements
 
-* [Ansible](https://www.ansible.com/) - Tested with Ansible v2.4.0.0
+* [Ansible](https://www.ansible.com/) - Tested with Ansible v2.9.10
 
 ## HOWTO configure the monitoring servers with this ansible playbook
 
