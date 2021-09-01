@@ -10,9 +10,6 @@ ff02::3 ip6-allhosts
 127.0.0.1   localhost
 
 # Network nodes as generated through Ansible.
-{% for host in play_hosts %}
-{% set short_name = host.split('.') %}
-{% if 'ansible_eth0' in hostvars[host] %}
-{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }} {{ host }} {{ short_name[0] }}
-{% endif %}
+{% for host in ansible_play_hosts %}
+{{ hostvars[host]['ansible_default_ipv4']['address'] }} {{ host }} {{ ansible_hostname }}
 {% endfor %}

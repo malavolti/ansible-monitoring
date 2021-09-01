@@ -7,6 +7,12 @@
    cache_valid_time: 3600
   tags: common
 
+- name: "Install GPG"
+  apt:
+    name: ['gpg','gpg-agent']
+    state: latest
+    install_recommends: no
+
 - name: "Configure the 'hosts' file with the FQDN provided"
   template:
    src: hosts.j2
