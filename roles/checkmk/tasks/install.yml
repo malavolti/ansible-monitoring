@@ -14,19 +14,17 @@
 
 - name: "Install passlib needed for htpasswd ansible module" 
   apt: 
-   pkg: "python-passlib"
+   pkg: "python3-passlib"
    state: latest
    install_recommends: no
 
 - name: "Be sure to load Check MK package to install"
   copy:
-   src: "{{ files_dir }}/{{ fqdn }}/deb/"
+   src: "{{ files_dir }}/{{ fqdn }}/{{ ansible_distribution }}/{{ ansible_distribution_release }}/"
    dest: "/usr/local/src/"
    owner: "root"
    group: "root"
    mode: "0644"
-  when: 
-   - ansible_distribution == 'Debian'
 
 - name: "Retrieve Check MK deb name"
   shell: "ls | tail -n 1 | grep check-mk-raw"
